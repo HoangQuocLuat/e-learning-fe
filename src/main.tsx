@@ -1,10 +1,90 @@
-// import React from 'react'
-// import ReactDOM from 'react-dom/client'
-// import App from './App.tsx'
-// import './index.css'
+import AntDesignProvider from '@themes/ant'
+import StyledProvider from '@themes/styled'
+import StyledThemeProvider from './themes/styled/theme'
+import i18next from 'i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { initReactI18next } from 'react-i18next'
+import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { setupI18n } from 'vite-plugin-i18n-detector/client'
+import vi from './locales/messages/vi.json'
+import { routers } from '@routers'
+import SettingProvider from '@contexts/setting/provider'
+import { AnimatePresence } from 'framer-motion'
+// import TagViewProvider from '@contexts/tag-view/provider'
 
-// ReactDOM.createRoot(document.getElementById('root')!).render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>,
-// )
+const root = ReactDOM.createRoot(document.getElementById('root')!)
+
+const router = createBrowserRouter(routers as RouteObject[])
+
+const lookupTarget = 'lang'
+const fallbackLng = 'vi'
+
+i18next
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    returnNull: false,
+    react: {
+      useSuspense: true,
+    },
+    resources: {
+      vi: {
+        translation: vi,
+      },
+    },
+    nsSeparator: '.',
+    fallbackLng,
+    keySeparator: '.',
+    interpolation: {
+      escapeValue: false,
+    },
+    lowerCaseLng: true,
+    detection: {
+      order: ['querystring', 'cookie', 'localStorage', 'sessionStorage', 'navigator'],
+      caches: ['localStorage', 'sessionStorage', 'cookie'],
+      lookupQuerystring: lookupTarget,
+      lookupLocalStorage: lookupTarget,
+      lookupSessionStorage: lookupTarget,
+      lookupCookie: lookupTarget,
+    },
+  })
+
+const { loadResourceByLang } = setupI18n({
+  language: i18next.language,
+  onInited() {
+    root.render(
+      <React.StrictMode>
+        <StyledThemeProvider>
+          <StyledProvider>
+            <AntDesignProvider>
+              <SettingProvider>
+                {/* <TagViewProvider> */}
+                  <AnimatePresence mode="wait">
+                    <RouterProvider router={router} />
+                  </AnimatePresence>
+                {/* </TagViewProvider> */}
+              </SettingProvider>
+            </AntDesignProvider>
+          </StyledProvider>
+        </StyledThemeProvider>
+      </React.StrictMode>,
+    )
+  },
+  onResourceLoaded: (langs, currentLang) => {
+    Object.keys(langs).forEach(ns => {
+      i18next.addResourceBundle(currentLang, ns, langs[ns])
+    })
+  },
+  fallbackLng,
+  cache: {
+    htmlTag: true,
+  },
+})
+
+const _changeLanguage = i18next.changeLanguage
+i18next.changeLanguage = async (lang: string, ...args) => {
+  await loadResourceByLang(lang)
+  return _changeLanguage(lang, ...args)
+}
