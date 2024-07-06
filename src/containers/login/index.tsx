@@ -13,6 +13,12 @@ import {
   Label,
   Title,
 } from './style'
+import { logIn } from '@graphql/query/auth/login'
+import { AUTHEN_TOKEN_KEY } from '@constants/key'
+import Cookies from 'js-cookie'
+import { useAuthContext } from '@contexts/auth/context'
+import { useNavigate } from 'react-router-dom'
+import { router_keys } from '@routers/key'
 
 type LoginContainerProps = {}
 const LoginContainer: React.FC<React.PropsWithChildren<LoginContainerProps>> = () => {
@@ -21,12 +27,33 @@ const LoginContainer: React.FC<React.PropsWithChildren<LoginContainerProps>> = (
     const { notification } = App.useApp()
     const t = useTranslations('auth')
 
+    const { setLogin } = useAuthContext()
+    const navigate = useNavigate()
+
+    const onFinish = () => {
+      const input = {
+        userName: form.getFieldValue('userName'),
+        password: form.getFieldValue('password'),
+      }
+      setLoading(true)
+      logIn({ input }).then(r => {
+        setLoading(false)
+        if (r.success) {
+          Cookies.set(AUTHEN_TOKEN_KEY, r?.data ?? '')
+          setLogin(true)
+          navigate(router_keys.home)
+          return
+        }
+        notification.error({ message: t('messages.sign_in_failed') })
+      })
+    }
+
     return (
         <HomeStyled>
           <Container>
             <FormStyled
               form={form}
-            //   onFinish={onFinish}
+              onFinish={onFinish}
               layout="vertical"
               name="sign-in-form"
               autoComplete="on"
@@ -35,7 +62,7 @@ const LoginContainer: React.FC<React.PropsWithChildren<LoginContainerProps>> = (
     
               <FormItemStyled
                 label={<Label>{t('labels.email_or_username')}</Label>}
-                name="username"
+                name="userName"
                 rules={[
                   {
                     required: true,

@@ -1,3 +1,4 @@
+import HomePage from '@app/home'
 import App from '../App'
 import { generateRandomId } from '@commons/id'
 import { type RouteObject, matchPath } from 'react-router-dom'
@@ -20,7 +21,7 @@ export const routers: DataRouteObject[] = [
         id: generateRandomId(),
         path: 'login',
         lazy: async () => {
-          const {default: LoginPage} = await import('@app/login')
+          const { default: LoginPage } = await import('@app/login')
           return {
             Component: LoginPage,
           }
@@ -29,6 +30,26 @@ export const routers: DataRouteObject[] = [
           title: 'Login',
         },
       },
+      {
+        id: generateRandomId(),
+        path: 'home',
+        element: <HomePage/>,
+        children: [
+          {
+            id: generateRandomId(),
+            path: '',
+            lazy: async () => {
+              const { default: HomePage } = await import('@app/home')
+              return {
+                Component: HomePage,
+              }
+            },
+            meta: {
+              title: 'Home',
+            },
+          },
+        ]
+      }
     ],
   },
 ]

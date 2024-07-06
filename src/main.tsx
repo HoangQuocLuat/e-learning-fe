@@ -12,7 +12,7 @@ import vi from './locales/messages/vi.json'
 import { routers } from '@routers'
 import SettingProvider from '@contexts/setting/provider'
 import { AnimatePresence } from 'framer-motion'
-// import TagViewProvider from '@contexts/tag-view/provider'
+import TagViewProvider from '@contexts/tag-view/provider'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
@@ -60,11 +60,11 @@ const { loadResourceByLang } = setupI18n({
           <StyledProvider>
             <AntDesignProvider>
               <SettingProvider>
-                {/* <TagViewProvider> */}
+                <TagViewProvider>
                   <AnimatePresence mode="wait">
                     <RouterProvider router={router} />
                   </AnimatePresence>
-                {/* </TagViewProvider> */}
+                </TagViewProvider>
               </SettingProvider>
             </AntDesignProvider>
           </StyledProvider>
