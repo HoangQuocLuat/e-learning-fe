@@ -10,12 +10,27 @@ export class Account extends Base {
   status?: ACCOUNT_STATUS
 
   @field()
-  email?: string
+  user_name?: string
 
   @field()
   role?: ACCOUNT_ROLE
 
   password?: string
+
+  @field()
+  name?:string
+  
+  @field()
+  date_birth?: string
+
+  @field()
+  phone?: string
+
+  @field()
+  email?: string
+  
+  @field()
+  address?: string
 
   public toAddJson() {
     return {

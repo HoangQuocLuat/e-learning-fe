@@ -2,6 +2,8 @@ import HomePage from '@app/home'
 import App from '../App'
 import { generateRandomId } from '@commons/id'
 import { type RouteObject, matchPath } from 'react-router-dom'
+import DashboardLayout from '@layouts/dashboard'
+import AccountListPage from '@app/accountList'
 
 export type DataRouteObject = Omit<RouteObject, 'children'> & {
   id: string
@@ -46,6 +48,26 @@ export const routers: DataRouteObject[] = [
             },
             meta: {
               title: 'Home',
+            },
+          },
+        ]
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'accountList',
+            lazy: async () => {
+              const { default: AccountListPage } = await import('@app/accountList')
+              return {
+                Component: AccountListPage,
+              }
+            },
+            meta: {
+              title: 'AccountList',
             },
           },
         ]
