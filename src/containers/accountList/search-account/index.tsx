@@ -5,17 +5,17 @@ import { Button, Dropdown, Form, Menu, Space } from 'antd'
 import * as _ from 'lodash'
 import { InputSearch } from '..'
 
-type SearchEntryProps = {
+type SearchAccountProps = {
     onSearch?: (input: InputSearch) => void
 }
 
-const SearchEntry: React.FC<SearchEntryProps> = ({ onSearch }) => {
+const SearchAccount: React.FC<SearchAccountProps> = ({ onSearch }) => {
     const [form] = Form.useForm()
 
     const onChangeSearch = useCallback(
         _.debounce(() => {
             const input = {
-                userName: form.getFieldValue('user_name'),
+                user_name: form.getFieldValue('user_name'),
                 phone: form.getFieldValue('phone'),
             }
             onSearch?.(input)
@@ -26,7 +26,7 @@ const SearchEntry: React.FC<SearchEntryProps> = ({ onSearch }) => {
     const onFinish = useCallback(
         (values: any) => {
             const input = {
-                userName: values.userName,
+                user_name: values.user_name,
                 phone: values.phone,
             }
 
@@ -43,7 +43,7 @@ const SearchEntry: React.FC<SearchEntryProps> = ({ onSearch }) => {
                     onFieldsChange={() => onChangeSearch()}
                     style={{ display: 'flex', gap: '1rem' }}
                 >
-                    <Form.Item name="userName" style={{ margin: '0' }}>
+                    <Form.Item name="user_name" style={{ margin: '0' }}>
                         <Inputs placeholder="tên tài khoản" prefix={<SearchOutlined />} />
                     </Form.Item>
                     <Form.Item name="phone" style={{ margin: '0' }}>
@@ -56,4 +56,4 @@ const SearchEntry: React.FC<SearchEntryProps> = ({ onSearch }) => {
     )
 }
 
-export default SearchEntry
+export default SearchAccount

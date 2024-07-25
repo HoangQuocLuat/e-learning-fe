@@ -55,3 +55,4 @@ export const BoxAction = styled.div`
     gap: 3rem;
   }
 `
+

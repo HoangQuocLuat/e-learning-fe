@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Button, Space, TableProps, Upload, UploadProps, message, notification } from 'antd'
+import { Button, Space, TableProps, Upload, UploadProps, message, notification, Table } from 'antd'
 import { EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
 import { Buttons, Header, TableBox, Wrap, TableData, BoxAction } from './style'
 import { Account } from '@models/account'
@@ -10,10 +10,10 @@ import { usePushShallowRoute } from '@hooks/router'
 import { useParams } from 'react-router-dom'
 import ButtonDelete from './button-delete'
 // import TableChildren from './tableChildren'
-import SearchEntry from './search-account'
 import Cookies from 'js-cookie'
 import { AUTHEN_TOKEN_KEY } from '@constants/key'
 import DrawersListAccount, { DrawerListAccountMethods } from './drawerListAccount'
+import SearchAccount from './search-account'
 
 
 type FetchParams = {
@@ -23,7 +23,7 @@ type FetchParams = {
 }
 
 export type InputSearch = {
-  userName: string
+  user_name: string
   phone: string
 }
 
@@ -36,20 +36,6 @@ const ListOrder: React.FC = () => {
   //@ts-ignore
   const params = useParams(['page', 'limit'])
   const paramsRef = useRef(params)
-
-  // useEffect(() => {
-  //   const fetchStatusList = async () => {
-  //     try {
-  //       const response = await statusList()
-  //       if (response.success) {
-  //         setDataStatus(response.data)
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching status list:', error)
-  //     }
-  //   }
-  //   fetchStatusList()
-  // }, [])
 
   const fetch = useCallback(({ page, limit, search }: FetchParams) => {
     setLoading(true)
@@ -67,63 +53,56 @@ const ListOrder: React.FC = () => {
       })
   }, [])
 
-  // const uploadProps: UploadProps = {
-  //   name: 'file',
-  //   accept: '.csv',
-  //   action: apiUploadFileEntry,
-  //   showUploadList: false,
-  //   headers: {
-  //     authorization: `Bearer ${Cookies.get(AUTHEN_TOKEN_KEY)}`,
-  //   },
-  //   beforeUpload: file => {
-  //     const isCSV = file.type === 'text/csv'
-  //     if (!isCSV) {
-  //       notification.error({ message: 'Chỉ chấp nhận file csv' })
-  //     }
-  //     return isCSV || Upload.LIST_IGNORE
-  //   },
-  //   onChange(info) {
-  //     if (info.file.status === 'done') {
-  //       fetch({ page: 1, limit: page?.limit ?? 10 })
-  //       message.success(`${info.file.name} file uploaded successfully`)
-  //     } else if (info.file.status === 'error') {
-  //       message.error(`${info.file.name} file upload failed.`)
-  //     }
-  //   },
-  // }
+  const uploadProps: UploadProps = {
+    name: 'file',
+    accept: '.csv',
+    // action: apiUploadFileEntry,
+    showUploadList: false,
+    headers: {
+      authorization: `Bearer ${Cookies.get(AUTHEN_TOKEN_KEY)}`,
+    },
+    beforeUpload: file => {
+      const isCSV = file.type === 'text/csv'
+      if (!isCSV) {
+        notification.error({ message: 'Chỉ chấp nhận file csv' })
+      }
+      return isCSV || Upload.LIST_IGNORE
+    },
+    onChange(info) {
+      if (info.file.status === 'done') {
+        fetch({ page: 1, limit: page?.limit ?? 10 })
+        message.success(`${info.file.name} file uploaded successfully`)
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`)
+      }
+    },
+  }
 
-  // const onSearch = (input: InputSearch) => {
-  //   const user_name = input?.userName
-  //   const phone = input?.phone
-  //   if (user_name) {
-  //     onPushShallow({ user_name })
-  //     fetch({
-  //       page: 1,
-  //       limit: page.limit ?? 10,
-  //       search: { user_name},
-  //     })
-  //   } else if (phone) {
-  //     onPushShallow({ phone })
-  //     fetch({
-  //       page: 1,
-  //       limit: page.limit ?? 10,
-  //       search: { phone },
-  //     })
-  //   } else {
-  //     onPushShallow({ page: 1, limit: page.limit })
-  //     fetch({
-  //       page: 1,
-  //       limit: page.limit ?? 10,
-  //     })
-  //   }
-  // }
-
-  // const onStatus = (status: number) => {
-  //   if (status) {
-  //     onPushShallow({ status })
-  //     fetch({ page: 1, limit: page.limit, search: { status } })
-  //   }
-  // }
+  const onSearch = (input: InputSearch) => {
+    const user_name = input?.user_name
+    const phone = input?.phone
+    if (user_name) {
+      onPushShallow({ user_name })
+      fetch({
+        page: 1,
+        limit: page.limit ?? 10,
+        search: { user_name},
+      })
+    } else if (phone) {
+      onPushShallow({ phone })
+      fetch({
+        page: 1,
+        limit: page.limit ?? 10,
+        search: { phone },
+      })
+    } else {
+      onPushShallow({ page: 1, limit: page.limit })
+      fetch({
+        page: 1,
+        limit: page.limit ?? 10,
+      })
+    }
+  }
 
   useMounted(() => fetch({ page: 1, limit: page?.limit }))
 
@@ -138,51 +117,69 @@ const ListOrder: React.FC = () => {
       dataIndex: 'user_name',
       key: 'user_name',
     },
-    // {
-    //   title: 'Trạng thái',
-    //   dataIndex: 'status',
-    //   key: 'status',
-    //   render: (status: StatusData) => (
-    //     <span style={{ color: '#3154A0', fontWeight: 'bold' }}>{status?.name}</span>
-    //   ),
-    // },
-    // {
-    //   title: '',
-    //   key: 'action',
-    //   render: (_, record) => (
-    //     <Space size="middle">
-    //       <Button
-    //         icon={<EditOutlined />}
-    //         onClick={() => drawerRef.current?.open(record)}
-    //         style={{ border: 'none' }}
-    //       />
-    //       <ButtonDelete
-    //         record={record}
-    //         fetchEntry={() =>
-    //           fetch({
-    //             page: page.current,
-    //             limit: page.limit ?? 10,
-    //           })
-    //         }
-    //       />
-    //     </Space>
-    //   ),
-    // },
+    {
+      title: 'Hành động',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => drawerRef.current?.open(record)}
+            style={{ border: 'none' }}
+          />
+          <ButtonDelete
+            record={record}
+            fetchEntry={() =>
+              fetch({
+                page: page.current,
+                limit: page.limit ?? 10,
+              })
+            }
+          />
+        </Space>
+      ),
+    },
   ]
+  const columns_children = [
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
+    },
+  ]
+  const expandedRowRender = (record: Account) => {
+    return (
+      <Table
+      columns={[
+        { title: 'Key', dataIndex: 'key', key: 'key' },
+        { title: 'Value', dataIndex: 'value', key: 'value' }
+      ]}
+      dataSource={[
+        { key: 'Status', value: record.status },
+        { key: 'Date of Birth', value: record.date_birth },
+        { key: 'Phone', value: record.phone },
+        { key: 'Email', value: record.email },
+        { key: 'Address', value: record.address }
+      ]}
+      pagination={false}
+      showHeader={false}
+    />
+    )
+  }
 
   return (
     <Wrap>
       <Header>
-        {/* <SearchEntry onSearch={onSearch} dataStatus={dataStatus} /> */}
+        <SearchAccount onSearch={onSearch}/>
         <BoxAction>
-          {/* <Upload {...uploadProps}>
+          <Upload {...uploadProps}>
             <Button
               icon={<UploadOutlined />}
               style={{ color: '#3154A0', border: '1px solid #3154A0' }}
             >
               Import
             </Button>
-          </Upload> */}
+          </Upload>
           <Buttons icon={<PlusOutlined />} onClick={() => drawerRef.current?.open()}>
             Thêm tài khoản
           </Buttons>
@@ -198,10 +195,7 @@ const ListOrder: React.FC = () => {
             rowKey={record => record?.id ?? ''}
             dataSource={accountData}
             scroll={{ x: 600 }}
-            // expandable={{
-            //   expandedRowRender: (record: Account) => <TableChildren account={record} />,
-            //   rowExpandable: record => record.name !== 'Not Expandable',
-            // }}
+            expandable={{ expandedRowRender }}
             pagination={{
               pageSize: page.limit ?? 10,
               current: page.current > 0 ? page.current : 1,
