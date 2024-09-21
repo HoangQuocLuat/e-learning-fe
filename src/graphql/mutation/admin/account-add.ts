@@ -1,48 +1,50 @@
 import { ApolloError, gql } from '@apollo/client'
-import { ACCOUNT_ROLE } from '@constants/defines'
 import client from '@graphql/client/admin_client'
 import { handleGraphqlError } from '@graphql/handle'
 import { Account } from '@models/account'
 
 const accountAddGql = gql`
-  mutation AccountAdd($data: AccountAdd!) {
-    accountAdd(data: $data) {
+  mutation UserAdd($data: UserAdd!) {
+    userAdd(data: $data) {
       id
-      email
+      user_name
       role
       status
       name
       date_birth
       phone
+      email
       address
     }
   }
-`
+`;
 
-export const accountAdd: BaseApiFunction<
-  Account,
-  {
-    username?: string
-    password?: string
-    role?: ACCOUNT_ROLE
-  }
-> = p => {
+export const accountAdd: BaseApiFunction<Account> = (p) => {
   return client
     .mutate<{
-      accountAdd: BaseResponseData<Account>
+      accountAdd: BaseResponseData<Account>;
     }>({
       mutation: accountAddGql,
       variables: {
-        data: p.input,
+        data: {
+          user_name: p.input?.user_name,
+          password: p.input?.password,
+          role: p.input?.role,
+          name: p.input?.name,
+          date_birth: p.input?.date_birth,
+          phone: p.input?.phone,
+          email: p.input?.email,
+          address: p.input?.address,
+        },
       },
     })
     .then(r => {
       return {
         success: true,
         data: Account.fromJson(r.data?.accountAdd),
-      }
+      };
     })
     .catch((e: ApolloError) => {
-      return handleGraphqlError(e)
-    })
-}
+      return handleGraphqlError(e);
+    });
+};

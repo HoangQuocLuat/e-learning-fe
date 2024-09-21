@@ -35,7 +35,6 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
         userName: dataAccount.user_name,
         password: dataAccount.password,
         role: dataAccount.role,
-        status: dataAccount.status,
         name: dataAccount.name,
         dateBirth: dataAccount.date_birth,
         phone: dataAccount.phone,
@@ -55,7 +54,6 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
     input.user_name = form.getFieldValue('user_name')
     input.password = form.getFieldValue('password')
     input.role = form.getFieldValue('role')
-    input.status = form.getFieldValue('status')
     input.name = form.getFieldValue('name')
     input.date_birth = form.getFieldValue('date_birth')
     input.phone = form.getFieldValue('phone')
@@ -102,7 +100,7 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
         >
           <Input placeholder="Vui lòng nhập chức vụ" />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Trạng thái"
           name="status"
           rules={[{ required: true, message: 'Vui lòng nhập trạng thái!' }]}
@@ -114,8 +112,8 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
               </Select.Option>
             ))}
           </Select> */}
-          <Input placeholder="Vui lòng nhập trạng thái" />
-        </Form.Item>
+          {/* <Input placeholder="Vui lòng nhập trạng thái" />
+        </Form.Item>  */}
         <Form.Item
           label="Họ tên đầy đủ"
           name="name"

@@ -71,6 +71,26 @@ export const routers: DataRouteObject[] = [
             },
           },
         ]
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'schedules',
+            lazy: async () => {
+              const { default: SchedulesPage } = await import('@app/schedules')
+              return {
+                Component: SchedulesPage,
+              }
+            },
+            meta: {
+              title: 'Schedules',
+            },
+          },
+        ]
       }
     ],
   },

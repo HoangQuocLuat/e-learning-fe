@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { Button, Space, TableProps, Upload, UploadProps, message, notification, Table } from 'antd'
 import { EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
 import { Buttons, Header, TableBox, Wrap, TableData, BoxAction } from './style'
@@ -27,7 +27,7 @@ export type InputSearch = {
   phone: string
 }
 
-const ListOrder: React.FC = () => {
+const ListAccount: React.FC = () => {
   const drawerRef = useRef<DrawerListAccountMethods>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [accountData, setAccountData] = useState<Account[]>([])
@@ -113,9 +113,19 @@ const ListOrder: React.FC = () => {
       key: 'name',
     },
     {
+      title: 'Ngày sinh',
+      dataIndex: 'date_birth',
+      key: 'date_birth',
+    },
+    {
       title: 'Tên tài khoản',
       dataIndex: 'user_name',
       key: 'user_name',
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
     },
     {
       title: 'Hành động',
@@ -140,32 +150,29 @@ const ListOrder: React.FC = () => {
       ),
     },
   ]
-  const columns_children = [
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-    },
-  ]
   const expandedRowRender = (record: Account) => {
     return (
       <Table
-      columns={[
-        { title: 'Key', dataIndex: 'key', key: 'key' },
-        { title: 'Value', dataIndex: 'value', key: 'value' }
-      ]}
-      dataSource={[
-        { key: 'Status', value: record.status },
-        { key: 'Date of Birth', value: record.date_birth },
-        { key: 'Phone', value: record.phone },
-        { key: 'Email', value: record.email },
-        { key: 'Address', value: record.address }
-      ]}
-      pagination={false}
-      showHeader={false}
-    />
+        columns={[
+          { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone' },
+          { title: 'Email', dataIndex: 'email', key: 'email' },
+          { title: 'Địa chỉ', dataIndex: 'address', key: 'address' },
+        ]}
+        dataSource={[
+          {
+            key: '1',
+            phone: record.phone,
+            email: record.email,
+            address: record.address,
+          },
+        ]}
+        pagination={false}
+        showHeader={true} // Hiển thị tiêu đề của cột
+      />
     )
   }
+  
+  
 
   return (
     <Wrap>
@@ -216,7 +223,6 @@ const ListOrder: React.FC = () => {
         }
         <DrawersListAccount
           ref={drawerRef}
-          // dataStatus={dataStatus}
           onAccountSucces={() => fetch({ page: 1, limit: page.limit ?? 10 })}
           onAccountUpdateSucces={() =>
             fetch({
@@ -230,4 +236,4 @@ const ListOrder: React.FC = () => {
   )
 }
 
-export default ListOrder
+export default ListAccount

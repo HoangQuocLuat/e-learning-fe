@@ -18,9 +18,6 @@ export class Base {
   @field()
   id?: string
 
-  @field()
-  order?: number
-
   // @ts-ignore
   // eslint-disable-next-line no-useless-constructor, no-empty-function
   constructor(json?: any) {}

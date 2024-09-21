@@ -47,7 +47,12 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
             {
               key: '/dashboard/accountList',
               icon: <FileDoneOutlined />,
-              label: <Link to={router_keys.accountList}>Danh sách thông tin tài khoản</Link>,
+              label: <Link to={router_keys.accountList}>Quản lý tài khoản</Link>,
+            },
+            {
+              key: '/dashboard/schedules',
+              icon: <FileDoneOutlined />,
+              label: <Link to={router_keys.accountList}>Quản lý lịch</Link>,
             },
             
           ]}

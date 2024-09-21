@@ -35,12 +35,13 @@ const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccou
     const onAddAccount = (input: Account) => {
       return accountAdd({
         input: {
-          email: input.email,
+          user_name: input.user_name,
+          password: input.password,
           role: input.role,
-          status: input.status,
           name: input.name,
           date_birth: input.date_birth,
           phone: input.phone,
+          email: input.email,
           address: input.address
         },
       })
@@ -51,6 +52,7 @@ const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccou
             onClose()
           }
           if (!rAccount.success) {
+            console.log(input)
             notification.error({ message: 'Thêm thông tin tài khoản không thành công' })
           }
           return Promise.resolve(rAccount.success ?? false)

@@ -51,7 +51,6 @@ const SearchAccount: React.FC<SearchAccountProps> = ({ onSearch }) => {
                     </Form.Item>
                 </Form>
             </BoxInput>
-
         </BoxSearch>
     )
 }

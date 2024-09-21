@@ -7,8 +7,8 @@ import { Pagination } from '@models/pagination'
 import Cookies from 'js-cookie'
 
 const accountPaginationGql = gql`
-  query Paging($page: Int!, $limit: Int!, $orderBy: String, $search: Map) {
-    accountPagination(page: $page, limit: $limit, order_by: $orderBy, search: $search) {
+  query UserPagination($page: Int!, $limit: Int!, $orderBy: String, $search: Map) {
+    userPagination(page: $page, limit: $limit, order_by: $orderBy, search: $search) {
       paging {
         current_page
         limit
@@ -33,7 +33,7 @@ const accountPaginationGql = gql`
 export const accountPagination: BaseApiFunction<Account[]> = p => {
     return client
         .query<{
-            accountPagination: BaseResponseData<Account[]>
+            userPagination: BaseResponseData<Account[]>
         }>({
             query: accountPaginationGql,
             fetchPolicy: 'no-cache',
@@ -47,8 +47,8 @@ export const accountPagination: BaseApiFunction<Account[]> = p => {
         .then(r => {
             return {
                 success: true,
-                data: (r.data.accountPagination.rows ?? []).map(Account.fromJson),
-                paging: Pagination.fromJson(r.data.accountPagination.paging),
+                data: (r.data.userPagination.rows ?? []).map(Account.fromJson),
+                paging: Pagination.fromJson(r.data.userPagination.paging),
             }
         })
         .catch((e: ApolloError) => {

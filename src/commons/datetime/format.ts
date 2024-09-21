@@ -27,8 +27,16 @@ export const formatScheduleTime = (start: string, end: string) => {
   const hEnd = endTime.format(HH_mm)
 
   if (dStart === dEnd) {
-    return `${hStart} - ${hEnd}(${dStart})`
+    return `${hStart} - ${hEnd} (${dStart})`
   }
 
   return `${hStart} (${dStart}) - ${hEnd} (${dEnd})`
+}
+
+// Thêm hàm để định dạng cho lịch
+export const formatScheduleForBackend = (startDate: string, startTime: string) => {
+  const formattedStartDate = dateTime(startDate, 'DD-MM-YYYY').format('YYYY-MM-DD')
+  const formattedStartTime = dateTime(startTime, 'HH:mm').format('HH:mm:ss')
+  
+  return `${formattedStartDate}T${formattedStartTime}Z` // Định dạng ISO 8601
 }

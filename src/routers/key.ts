@@ -3,6 +3,7 @@ export const router_keys = {
     home: '/home',
     dashboard: '/dashboard',
     accountList: 'dashboard/accountList',
+    schedules: 'dashboard/schedules',
   
     template: {
       table: {
