@@ -13,6 +13,7 @@
     "@ant-design/cssinjs": "^1.21.0",
     "@apollo/client": "^3.10.8",
     "@types/react-custom-scrollbars": "^4.0.13",
+    "dayjs": "^1.11.13",
     "framer-motion": "^11.2.12",
     "graphql": "^16.9.0",
     "i18next": "^23.11.5",

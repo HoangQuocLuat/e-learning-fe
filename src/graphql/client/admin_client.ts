@@ -5,7 +5,7 @@ import { getAuthenToken } from '@commons/cookies'
 
 const httpLink = createHttpLink({
   // uri: `${ENV.API_URL}/graphql/admin`,
-  uri: "http://localhost:8080/api/v1/graphql/admin"
+  uri: "http://localhost:8989/api/v1/graphql/admin"
 })
 
 const authLink = setContext((_, { headers }) => {

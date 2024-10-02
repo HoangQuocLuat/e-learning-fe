@@ -7,6 +7,9 @@ import { Base } from './base'
 @model()
 export class Account extends Base {
   @field()
+  class_id?: string
+
+  @field()
   status?: number
 
   @field()

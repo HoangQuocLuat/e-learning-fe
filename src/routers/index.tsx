@@ -3,7 +3,6 @@ import App from '../App'
 import { generateRandomId } from '@commons/id'
 import { type RouteObject, matchPath } from 'react-router-dom'
 import DashboardLayout from '@layouts/dashboard'
-import AccountListPage from '@app/accountList'
 
 export type DataRouteObject = Omit<RouteObject, 'children'> & {
   id: string
@@ -88,6 +87,26 @@ export const routers: DataRouteObject[] = [
             },
             meta: {
               title: 'Schedules',
+            },
+          },
+        ]
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'class',
+            lazy: async () => {
+              const { default: ClassPage } = await import('@app/class')
+              return {
+                Component: ClassPage,
+              }
+            },
+            meta: {
+              title: 'Class',
             },
           },
         ]

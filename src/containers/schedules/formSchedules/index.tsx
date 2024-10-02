@@ -1,9 +1,27 @@
-import React, { useImperativeHandle, forwardRef, useRef, useEffect } from 'react';
-import { Modal, Form, Input, TimePicker, Button, Select, DatePicker } from 'antd';
+import React, { useImperativeHandle, forwardRef,useCallback, useRef, useEffect, useState} from 'react';
+import { Modal, Form, Input, TimePicker, Button, Select, DatePicker,notification} from 'antd';
 import { CheckOutlined } from '@ant-design/icons'
 import { Schedules } from '@models/schedules';
+import { Class } from '@models/class';
 import dayjs from 'dayjs';
+import { classList } from '@graphql/query/admin/class-list'
+import { useMounted } from '@hooks/lifecycle'
 
+const scheduleOptions = [
+  { value: 0, label: 'Học bình thường' },
+  { value: 1, label: 'Làm bài kiểm tra' },
+  { value: 2, label: 'Học bù' },
+];
+
+const dayOfWeekOptions = [
+  { value: 0, label: 'Monday' },
+  { value: 1, label: 'Tuesday' },
+  { value: 2, label: 'Wednesday' },
+  { value: 3, label: 'Thursday' },
+  { value: 4, label: 'Friday' },
+  { value: 5, label: 'Saturday' },
+  { value: 6, label: 'Sunday' },
+];
 export type AddScheduleFormProps = {
   dataSchedules?: Schedules;
   onAddSchedules?: (schedule: Schedules) => Promise<boolean>;
@@ -29,8 +47,10 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
   useEffect(() => {
     if (dataSchedules) {
       form.setFieldsValue({
+        class_id: dataSchedules.class_id,
         description: dataSchedules.description,
         schedulesType: dataSchedules.schedules_type,
+        dayOfWeek: dataSchedules.day_of_week,
         startTime: dayjs(dataSchedules.start_time),
         endTime: dayjs(dataSchedules.end_time),
         startDate: dayjs(dataSchedules.start_date),
@@ -41,11 +61,29 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
     }
   }, [dataSchedules]);
 
+  const [classData, setClassData] = useState<Class[]>([])
+  const fetchClassList = useCallback(() => {
+    classList()
+      .then(rClass => {
+        if (rClass.success) {
+          setClassData(rClass.data ?? [])
+          // setPage(rClass.paging!)
+        }
+      })
+      .catch(() => {
+        notification.error({ message: 'Có lỗi xảy ra!' })
+      })
+  }, [])
+
+  useMounted(() => fetchClassList())
+
   const onFinish = () => {
     const input = { ...oldData.current } as Schedules;
 
+    input.class_id = form.getFieldValue('class_id');
     input.description = form.getFieldValue('description');
     input.schedules_type = form.getFieldValue('schedulesType');
+    input.day_of_week = form.getFieldValue('day_of_week');
     input.start_time = form.getFieldValue('startTime').format('HH:mm');
     input.end_time = form.getFieldValue('endTime').format('HH:mm');
     input.start_date = form.getFieldValue('startDate').format('DD-MM-YYYY');
@@ -55,7 +93,8 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
       onAddSchedules?.(input);
     }
 
-    form.resetFields();
+    // form.resetFields();
+
   };
 
   return(
@@ -71,6 +110,19 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
     >
       <div>
         <Form.Item
+          label="Chọn lớp học"
+          name="class_id"
+          rules={[{ required: true, message: 'Vui lòng chọn lớp học!' }]}
+        >
+          <Select placeholder="Chọn lớp học" style={{ width: 200 }}>
+            {classData?.map(cls => (
+              <Select.Option key={cls.id} value={cls.id}>
+                {cls.class_name} {/* Hiển thị tên lớp học */}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
           label="Nội dung"
           name="description"
           rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
@@ -82,11 +134,26 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
           name="schedulesType"
           rules={[{ required: true, message: 'Vui lòng chọn loại lịch!' }]}
         >
-          <Select placeholder="Chọn loại lịch">
-            <Select.Option value="1">Học bình thường</Select.Option>
-            <Select.Option value="2">Làm bài kiểm tra</Select.Option>
-            <Select.Option value="3">Học bù</Select.Option>
-          </Select>
+          <Select placeholder="Chọn loại lịch" style={{ width: 200 }}>
+        {scheduleOptions.map(option => (
+          <Select.Option key={option.value} value={option.value}>
+            {option.label}
+          </Select.Option>
+        ))}
+      </Select>
+        </Form.Item>
+        <Form.Item
+          label="Ngày trong tuần"
+          name="day_of_week"
+          rules={[{ required: true, message: 'Vui lòng chọn ngày trong tuần!' }]}
+        >
+           <Select placeholder="Chọn ngày trong tuần" style={{ width: 200 }}>
+        {dayOfWeekOptions.map(option => (
+          <Select.Option key={option.value} value={option.value}>
+            {option.label}
+          </Select.Option>
+        ))}
+      </Select>
         </Form.Item>
         <Form.Item
           label="Ngày bắt đầu"

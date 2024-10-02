@@ -41,6 +41,8 @@ const DrawersSchedules = forwardRef<DrawerSchedulesMethods, DrawersSchedulesProp
           end_time: input.end_time,
           schedules_type: input.schedules_type,
           description: input.description,
+          day_of_week: input.day_of_week,
+          class_id: input.class_id,
         },
       })
         .then(rSchedules => {

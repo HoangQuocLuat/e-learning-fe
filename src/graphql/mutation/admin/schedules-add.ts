@@ -13,6 +13,7 @@ const schedulesAddGql = gql`
       end_date
       schedules_type
       description
+      day_of_week
     }
   }
 `;
@@ -25,16 +26,19 @@ export const schedulesAdd: BaseApiFunction<Schedules> = (p) => {
       mutation: schedulesAddGql,
       variables: {
         data: {
+          class_id: p.input?.class_id,
           start_date: p.input?.start_date,
           end_date: p.input?.end_date,
           start_time: p.input?.start_time,
           end_time: p.input?.end_time,
           schedules_type: p.input?.schedules_type,
           description: p.input?.description,
+          day_of_week: p.input?.day_of_week,
         },
       },
     })
     .then(r => {
+      // console.log(r.data?.schedulesAdd)
       return {
         success: true,
         data: Schedules.fromJson(r.data?.schedulesAdd),

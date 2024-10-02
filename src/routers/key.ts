@@ -2,8 +2,9 @@ export const router_keys = {
     login: '/login',
     home: '/home',
     dashboard: '/dashboard',
-    accountList: 'dashboard/accountList',
-    schedules: 'dashboard/schedules',
+    accountList: '/accountList',
+    schedules: '/schedules',
+    class: '/class',
   
     template: {
       table: {

@@ -35,6 +35,7 @@ const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccou
     const onAddAccount = (input: Account) => {
       return accountAdd({
         input: {
+          class_id: input.class_id,
           user_name: input.user_name,
           password: input.password,
           role: input.role,
@@ -62,31 +63,36 @@ const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccou
         })
     }
 
-    // const onUpdateAccount = (input: Account) => {
-    //   return accountUpdate({
-    //     input: {
-    //       id: input.id,
-    //       originalCode: input.originalCode,
-    //       internationalCode: input.internationalCode,
-    //       destination: input.destination,
-    //       status: input.status,
-    //     },
-    //   })
-    //     .then(rEntry => {
-    //       if (rEntry.success) {
-    //         notification.success({ message: 'Cập nhật thông tin đơn hàng thành công' })
-    //         onEntryUpdateSucces()
-    //         onClose()
-    //       }
-    //       if (!rEntry.success) {
-    //         notification.error({ message: 'Cập nhật thông tin đơn hàng không thành công' })
-    //       }
-    //       return Promise.resolve(rEntry.success ?? false)
-    //     })
-    //     .catch(() => {
-    //       return Promise.resolve(false)
-    //     })
-    // }
+    const onUpdateAccount = (input: Account) => {
+      return accountUpdate({
+        input: {
+          id: input.id,
+          class_id: input.class_id,
+          user_name: input.user_name,
+          password: input.password,
+          role: input.role,
+          name: input.name,
+          date_birth: input.date_birth,
+          phone: input.phone,
+          email: input.email,
+          address: input.address
+        },
+      })
+        .then(rEntry => {
+          if (rEntry.success) {
+            notification.success({ message: 'Cập nhật thông tin đơn hàng thành công' })
+            onEntryUpdateSucces()
+            onClose()
+          }
+          if (!rEntry.success) {
+            notification.error({ message: 'Cập nhật thông tin đơn hàng không thành công' })
+          }
+          return Promise.resolve(rEntry.success ?? false)
+        })
+        .catch(() => {
+          return Promise.resolve(false)
+        })
+    }
 
     return (
       <DrawerStyle

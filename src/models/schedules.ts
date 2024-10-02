@@ -2,9 +2,13 @@ import { field } from '@decorators/field'
 import { model } from '@decorators/model'
 import clone from 'lodash/clone'
 import { Base } from './base'
+import {Class} from './class'
 
 @model()
 export class Schedules extends Base {
+  @field()
+  class?: Class
+
   @field()
   class_id?: string
 
@@ -25,6 +29,9 @@ export class Schedules extends Base {
 
   @field()
   schedules_type?:string
+
+  @field()
+  day_of_week?:number
 
   public toAddJson() {
     return {
