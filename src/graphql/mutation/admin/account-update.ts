@@ -19,12 +19,12 @@ const accountUpdateGql = gql`
   }
 `;
 
-export const accountAdd: BaseApiFunction<Account> = (p) => {
+export const accountUpdate: BaseApiFunction<Account> = (p) => {
   return client
     .mutate<{
       accountAdd: BaseResponseData<Account>;
     }>({
-      mutation: accountAddGql,
+      mutation: accountUpdateGql,
       variables: {
         data: {
           user_name: p.input?.user_name,

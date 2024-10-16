@@ -110,6 +110,26 @@ export const routers: DataRouteObject[] = [
             },
           },
         ]
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'tuition',
+            lazy: async () => {
+              const { default: TuitionPage } = await import('@app/tuition')
+              return {
+                Component: TuitionPage,
+              }
+            },
+            meta: {
+              title: 'Tuition',
+            },
+          },
+        ]
       }
     ],
   },

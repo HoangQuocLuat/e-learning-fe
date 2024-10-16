@@ -15,7 +15,7 @@ const SchedulesContainer: React.FC = () => {
   const [selectedSchedule, setSelectedSchedule] = useState<Schedules | null>(null);
   const [loading, setLoading] = useState(false);
   const [dataSchedulesList, setDataSchedulesList] = useState<Schedules[]>([]);
-  const fetchSchedulesList = useCallback(() => {
+  const fetchSchedulesList = () => {
     setLoading(true);
     schedulesList()
       .then((response) => {
@@ -30,7 +30,7 @@ const SchedulesContainer: React.FC = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }
 
   useMounted(() => fetchSchedulesList());
 

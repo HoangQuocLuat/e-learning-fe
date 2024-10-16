@@ -59,6 +59,11 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
               icon: <FileDoneOutlined />,
               label: <Link to={router_keys.class}>Quản lý lớp học</Link>,
             },
+            {
+              key: '/dashboard/tuition',
+              icon: <FileDoneOutlined />,
+              label: <Link to={router_keys.tuition}>Quản lý học phí</Link>,
+            },
             
           ]}
         />

@@ -2,38 +2,25 @@ import { field } from '@decorators/field'
 import { model } from '@decorators/model'
 import clone from 'lodash/clone'
 import { Base } from './base'
+import {Account} from './account'
 
 @model()
-export class Account extends Base {
+export class Tuition extends Base {
   @field()
-  class_id?: string
+  user?: Account
 
   @field()
-  status?: number
+  total_fee?: number
 
   @field()
-  user_name?: string
+  discount?: number
 
   @field()
-  role?: string
+  remaining_fee?: number
 
   @field()
-  password?: string
+  paid_amount?: number
 
-  @field()
-  name?:string
-  
-  @field()
-  date_birth?: string
-
-  @field()
-  phone?: string
-
-  @field()
-  email?: string
-  
-  @field()
-  address?: string
 
   public toAddJson() {
     return {
@@ -41,14 +28,14 @@ export class Account extends Base {
     }
   }
   static override fromJson(json?: any) {
-    return new Account(json ?? {})
+    return new Tuition(json ?? {})
   }
 
   static get default() {
     return this.fromJson({})
   }
 
-  static clone(d?: Account) {
-    return d ? clone(d) : new Account({})
+  static clone(d?: Tuition) {
+    return d ? clone(d) : new Tuition({})
   }
 }

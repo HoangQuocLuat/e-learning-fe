@@ -5,7 +5,7 @@ export const router_keys = {
     accountList: '/accountList',
     schedules: '/schedules',
     class: '/class',
-  
+    tuition: '/tuition',
     template: {
       table: {
         list: '/template/table',
