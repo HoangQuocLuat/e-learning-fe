@@ -1,11 +1,15 @@
 export const router_keys = {
     login: '/login',
     home: '/home',
+    tuitionUser: '/tuitionUser',
+    schedulesUser: '/schedulesUser',
+    inforUser:'/inforUser',
     dashboard: '/dashboard',
-    accountList: '/accountList',
-    schedules: '/schedules',
-    class: '/class',
-    tuition: '/tuition',
+    accountList: '/dashboard/accountList',
+    schedules: '/dashboard/schedules',
+    class: '/dashboard/class',
+    tuition: '/dashboard/tuition',
+    attendance: '/dashboard/attendance',
     template: {
       table: {
         list: '/template/table',

@@ -6,7 +6,7 @@ import { Tuition } from '@models/tuition'
 import Cookies from 'js-cookie'
 
 const tuitionUpdateGql = gql`
-  mutation TuitionUpdate($data: DetailEntryUpdate!) {
+  mutation TuitionUpdate($data: TuitionUpdate!) {
     tuitionUpdate(data: $data) {
         id
         total_fee
@@ -15,7 +15,6 @@ const tuitionUpdateGql = gql`
         remaining_fee
       }
     }
-  }
 `
 
 export const tuitionUpdate: BaseApiFunction<Tuition> = p => {

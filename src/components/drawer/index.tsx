@@ -16,7 +16,7 @@ type DrawerFormProps = {
 }
 
 const DrawerForm = forwardRef<DrawerFormMethods, DrawerFormProps>(
-  ({ onSuccess, onUpdateSuccess, title, onAdd, FormInputComponent }, ref) => {
+  ({ onSuccess, title, onAdd, FormInputComponent }, ref) => {
     const [visible, setVisible] = useState(false)
     const [data, setData] = useState<any>()
 

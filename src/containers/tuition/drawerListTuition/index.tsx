@@ -1,6 +1,6 @@
 import { useImperativeHandle, forwardRef, useState } from 'react'
 import { DrawerStyle, Title, Wrap } from '../../accountList/drawerListAccount/style'
-// import FormInputListAccount from '../formAccountList'
+import FormInputTuition from '../formListTuition'
 import { notification } from 'antd'
 import { Tuition } from '@models/tuition'
 import { tuitionUpdate } from '@graphql/mutation/admin/tuition-update'
@@ -11,11 +11,11 @@ export type DrawerTuitionMethods = {
 }
 
 type DrawersTuitionProps = {
-  onTuitionUpdateSucces?: () => void
+  onTuitionUpdateSucces: () => void
 }
 
 const DrawersTuition = forwardRef<DrawerTuitionMethods, DrawersTuitionProps>(
-  (onTuitionUpdateSucces, ref) => {
+  ({onTuitionUpdateSucces}, ref) => {
     const [visible, setVisible] = useState(false)
     const [dataTuition, setDataTuition] = useState<Tuition>()
 
@@ -41,16 +41,16 @@ const DrawersTuition = forwardRef<DrawerTuitionMethods, DrawersTuitionProps>(
           remaining_fee: input.remaining_fee,
         },
       })
-        .then(rEntry => {
-          if (rEntry.success) {
+        .then(r => {
+          if (r.success) {
             notification.success({ message: 'Cập nhật thông tin học phí thành công' })
             onTuitionUpdateSucces()
             onClose()
           }
-          if (!rEntry.success) {
+          if (!r.success) {
             notification.error({ message: 'Cập nhật thông tin học phí không thành công' })
           }
-          return Promise.resolve(rEntry.success ?? false)
+          return Promise.resolve(r.success ?? false)
         })
         .catch(() => {
           return Promise.resolve(false)
@@ -59,15 +59,15 @@ const DrawersTuition = forwardRef<DrawerTuitionMethods, DrawersTuitionProps>(
 
     return (
       <DrawerStyle
-        title={<Title>{dataAccount ? 'Thông tin tài khoản' : 'Thêm thông tin tài khoản'}</Title>}
+        title={<Title>{dataTuition ? 'Thông tin học phí' : 'Sửa thông tin học phí'}</Title>}
         open={visible}
         width={700}
         onClose={onClose}
       >
         <Wrap>
-          <FormInputListAccount
-            dataAccount={dataAccount}
-            onAddAccount={onAddAccount}
+          <FormInputTuition
+            dataTuition={dataTuition}
+            onUpdateTuition= {onUpdateTuition}
           />
         </Wrap>
       </DrawerStyle>
@@ -75,4 +75,4 @@ const DrawersTuition = forwardRef<DrawerTuitionMethods, DrawersTuitionProps>(
   },
 )
 
-export default DrawersListAccount
+export default DrawersTuition

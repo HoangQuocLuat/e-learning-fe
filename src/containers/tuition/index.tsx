@@ -1,9 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { Buttons, Wrap, Header, TableBox } from '../accountList/style';
-import { Collapse, List, Spin, notification } from 'antd';
+import { Collapse, List, Button, Spin, notification } from 'antd';
+import { EditOutlined} from '@ant-design/icons'
 import { Tuition } from '@models/tuition';
 import { tuitionList } from '@graphql/query/admin/tuition-list';
+import DrawersListTuition, { DrawerTuitionMethods } from './drawerListTuition'
 import { useMounted } from '@hooks/lifecycle';
+import DrawersListAccount, { DrawerListAccountMethods } from '../accountList/drawerListAccount'
 
 type FetchParams = {
     month: string;
@@ -11,6 +14,8 @@ type FetchParams = {
 };
 
 const TuitionContainer: React.FC = () => {
+    const drawerRef = useRef<DrawerTuitionMethods>(null)
+    const drawerRef2 = useRef<DrawerListAccountMethods>(null)
     const [loading, setLoading] = useState(false);
     const [tuitionData, setTuitionData] = useState<{ [key: string]: Tuition[] }>({});
     
@@ -53,7 +58,12 @@ const TuitionContainer: React.FC = () => {
                         <p>Tổng học phí: {item.total_fee}</p>
                         <p>Số tiền sau khi giảm: {item.discount}</p>
                         <p>Số tiền đã trả: {item.paid_amount}</p>
-                        <p>Dư nợ: {item.remaining_fee}</p>
+                        <p>Dư nợ: {item.remaining_fee}</p>  
+                        <Button
+                            icon={<EditOutlined />}
+                            onClick={() => {drawerRef.current?.open(item)}}
+                            style={{ border: 'none' }}
+                        />
                     </List.Item>
                 )}
             />
@@ -77,6 +87,15 @@ const TuitionContainer: React.FC = () => {
                         ))}
                     </Collapse>
                 )}
+                <DrawersListTuition
+                 ref={drawerRef}
+                 onTuitionUpdateSucces={() =>
+                    fetchTuition({
+                      month:currentMonth,
+                      year:currentYear,
+                    })
+                  }
+                />
             </TableBox>
         </Wrap>
     );

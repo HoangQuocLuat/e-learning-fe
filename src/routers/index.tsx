@@ -1,8 +1,8 @@
-import HomePage from '@app/home'
 import App from '../App'
 import { generateRandomId } from '@commons/id'
 import { type RouteObject, matchPath } from 'react-router-dom'
 import DashboardLayout from '@layouts/dashboard'
+import HomeLayout from '@layouts/home'
 
 export type DataRouteObject = Omit<RouteObject, 'children'> & {
   id: string
@@ -33,12 +33,12 @@ export const routers: DataRouteObject[] = [
       },
       {
         id: generateRandomId(),
-        path: 'home',
-        element: <HomePage/>,
+        path: '',
+        element: <HomeLayout/>,
         children: [
           {
             id: generateRandomId(),
-            path: '',
+            path: 'home',
             lazy: async () => {
               const { default: HomePage } = await import('@app/home')
               return {
@@ -47,6 +47,39 @@ export const routers: DataRouteObject[] = [
             },
             meta: {
               title: 'Home',
+            },
+          },
+          {
+            id: generateRandomId(),
+            path: 'schedules',
+            lazy: async () => {
+              const { default: SchedulesPage } = await import('@app/user/schedules')
+              return {
+                Component: SchedulesPage,
+              }
+            },
+            meta: {
+              title: 'Schedules of Student',
+            },
+          }
+        ]
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout/>,
+        children: [
+          {
+            id: generateRandomId(),
+            path: '',
+            lazy: async () => {
+              const { default: DashBoardPage } = await import('@app/dashboard')
+              return {
+                Component: DashBoardPage,
+              }
+            },
+            meta: {
+              title: 'DashBoard',
             },
           },
         ]
@@ -130,7 +163,27 @@ export const routers: DataRouteObject[] = [
             },
           },
         ]
-      }
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'attendance',
+            lazy: async () => {
+              const { default:  AttendancePage} = await import('@app/attendance')
+              return {
+                Component: AttendancePage,
+              }
+            },
+            meta: {
+              title: 'Attendance',
+            },
+          },
+        ]
+      },
     ],
   },
 ]

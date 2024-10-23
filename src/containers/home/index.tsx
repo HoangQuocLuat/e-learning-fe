@@ -1,5 +1,4 @@
-type HomeContainerProps = {}
-const HomeContainer: React.FC<React.PropsWithChildren<HomeContainerProps>> = () => {
+const HomeContainer: React.FC = () => {
     return (
         <div>
             Home

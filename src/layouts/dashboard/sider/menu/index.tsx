@@ -1,17 +1,14 @@
 import React from 'react'
-import { Avatar, Image, MenuProps as MenuAntdProps, Typography } from 'antd'
+import { Avatar, MenuProps as MenuAntdProps, Typography } from 'antd'
 import {
   AppstoreOutlined,
-  EnvironmentOutlined,
   FileDoneOutlined,
-  UsergroupAddOutlined,
 } from '@ant-design/icons'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSetting } from '@contexts/setting/context'
 import { router_keys } from '@routers/key'
 import { BoxUser, Header, MenuAntdStyle, MenuStyled } from './style'
 import { useAuthContext } from '@contexts/auth/context'
-import Logo from '../../../assetes/logo.png'
 
 type MenuProps = {}
 
@@ -63,6 +60,11 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
               key: '/dashboard/tuition',
               icon: <FileDoneOutlined />,
               label: <Link to={router_keys.tuition}>Quản lý học phí</Link>,
+            },
+            {
+              key: '/dashboard/attendance',
+              icon: <FileDoneOutlined />,
+              label: <Link to={router_keys.attendance}>Quản lý điểm danh</Link>,
             },
             
           ]}

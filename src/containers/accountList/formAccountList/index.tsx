@@ -100,20 +100,6 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
         >
           <Input placeholder="Vui lòng nhập chức vụ" />
         </Form.Item>
-        {/* <Form.Item
-          label="Trạng thái"
-          name="status"
-          rules={[{ required: true, message: 'Vui lòng nhập trạng thái!' }]}
-        >
-          {/* <Select placeholder="Chọn trạng thái">
-            {dataStatus?.map(item => (
-              <Select.Option value={item?.value} key={item?.id}>
-                {item?.name}
-              </Select.Option>
-            ))}
-          </Select> */}
-          {/* <Input placeholder="Vui lòng nhập trạng thái" />
-        </Form.Item>  */}
         <Form.Item
           label="Họ tên đầy đủ"
           name="name"
