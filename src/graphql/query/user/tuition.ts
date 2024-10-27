@@ -2,7 +2,7 @@ import { ApolloError, gql } from '@apollo/client';
 import { AUTHEN_TOKEN_KEY } from '@constants/key';
 import client from '@graphql/client/core_client';
 import { handleGraphqlError } from '@graphql/handle';
-import { Schedules } from '@models/schedules';
+import { Tuition } from '@models/tuition';
 import Cookies from 'js-cookie';
 
 const decodeToken = (token: string) => {
@@ -11,22 +11,22 @@ const decodeToken = (token: string) => {
     return JSON.parse(atob(payload));
 };
 
-const scheduleGql = gql`
-  query schedules($userID: String!) {
-    schedules(userID: $userID) {
+const tuitionGql = gql`
+  query tuition($user_id: String!) {
+    tuition(user_id: $user_id) {
         id
-        day_of_week
-        start_date
-        end_date
-        start_time
-        end_time
-        schedules_type
-        description
+        total_fee
+        discount
+        paid_amount
+        remaining_fee
+        user{
+            id
+        }
     }
   }
 `;
 
-export const getSchedules = () => {
+export const getTuition = () => {
     const token = Cookies.get(AUTHEN_TOKEN_KEY) || '';
     const decoded = decodeToken(token);
     const userID = decoded?.account_id; 
@@ -36,11 +36,11 @@ export const getSchedules = () => {
 
     return client
         .query<{
-            schedules: BaseResponseData<Schedules[]>
+            tuition: BaseResponseData<Tuition[]>
         }>({
-            query: scheduleGql,
+            query: tuitionGql,
             fetchPolicy: 'no-cache',
-            variables: { userID }, 
+            variables: { user_id: userID }, 
             context: {
                 headers: {
                     token: token,
@@ -50,7 +50,7 @@ export const getSchedules = () => {
         .then(r => {
             return {
                 success: true,
-                data: r.data?.schedules,
+                data: r.data?.tuition,
             };
         })
         .catch((e: ApolloError) => {

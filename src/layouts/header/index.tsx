@@ -74,12 +74,10 @@ const LayoutHeader: React.FC<React.PropsWithChildren<LayoutHeaderProps>> = () =>
       <BoxTitle>
         <Hamburger />
         {/* <BreadCrumb /> */}
-        <p>ddd</p>
         <Title>{r?.meta?.title}</Title>
       </BoxTitle>
 
       <RightMenu>
-        <QuestionOutlined style={{ fontSize: '2.2rem', cursor: 'pointer' }} />
         <BellOutlined style={{ fontSize: '2.2rem', cursor: 'pointer' }} />
         <Dropdown menu={{ items }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
           <Avatar

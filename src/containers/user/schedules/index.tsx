@@ -3,11 +3,11 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Buttons, Wrap, Header } from '../../accountList/style';
 import { Badge, Calendar, Modal, Button } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { schedule } from '@graphql/query/user/schedule';
+import { getSchedules } from '@graphql/query/user/schedule';
 import { useMounted } from '@hooks/lifecycle';
 import { Schedules } from '@models/schedules';
 import {BoxAction, TableBox } from './style';
-
+import {formatScheduleTime} from '../../../commons/datetime/format'
 const SchedulesContainer: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedules | null>(null);
@@ -15,7 +15,7 @@ const SchedulesContainer: React.FC = () => {
   const [dataSchedulesList, setDataSchedulesList] = useState<Schedules[]>([]);
   const fetchSchedulesList = () => {
     setLoading(true);
-    schedule()
+    getSchedules()
       .then((response) => {
         if (response.success) {
           setDataSchedulesList(response.data ?? []);
@@ -73,9 +73,6 @@ const SchedulesContainer: React.FC = () => {
 
   return (
     <Wrap>
-      <Header>
-        <p>Thông tin lịch học</p>
-      </Header>
       <TableBox>      
       <Calendar cellRender={dateCellRender} />
       {/* Modal to display schedule details */}
@@ -91,13 +88,16 @@ const SchedulesContainer: React.FC = () => {
       >
         {selectedSchedule && (
           <div>
-            <p><strong>Class name:</strong> {selectedSchedule.class?.class_name}</p>
             <p><strong>Type:</strong> {selectedSchedule.schedules_type}</p>
-            <p><strong>Day of Week:</strong> {selectedSchedule.day_of_week}</p>
-            <p><strong>Start Time:</strong> {selectedSchedule.start_time}</p>
-            <p><strong>End Time:</strong> {selectedSchedule.end_time}</p>
-            <p><strong>Start Date:</strong> {selectedSchedule.start_date}</p>
-            <p><strong>End Date:</strong> {selectedSchedule.end_date}</p>
+            <p>
+                <strong>Time:</strong> 
+                {selectedSchedule.start_time && selectedSchedule.end_time
+                  ? formatScheduleTime(
+                      selectedSchedule.start_time,
+                      selectedSchedule.end_time
+                    )
+                  : 'Time not available'}
+              </p>
           </div>
         )}
       </Modal>

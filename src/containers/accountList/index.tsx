@@ -176,11 +176,6 @@ const ListAccount: React.FC = () => {
   return (
     <Wrap>
       <Header>
-      <Button
-            icon={<EditOutlined />}
-            onClick={() => {drawerRef.current?.open()}}
-            style={{ border: 'none' }}
-          />
         <SearchAccount onSearch={onSearch}/>
         <BoxAction>
           <Upload {...uploadProps}>

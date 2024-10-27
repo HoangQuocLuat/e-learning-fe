@@ -20,17 +20,10 @@ export const formatScheduleTime = (start: string, end: string) => {
   const startTime = dateTime(start)
   const endTime = dateTime(end)
 
-  const dStart = startTime.format(DD_MM_YYYY)
-  const dEnd = endTime.format(DD_MM_YYYY)
-
   const hStart = startTime.format(HH_mm)
   const hEnd = endTime.format(HH_mm)
 
-  if (dStart === dEnd) {
-    return `${hStart} - ${hEnd} (${dStart})`
-  }
-
-  return `${hStart} (${dStart}) - ${hEnd} (${dEnd})`
+  return `${hStart} - ${hEnd}`
 }
 
 // Thêm hàm để định dạng cho lịch

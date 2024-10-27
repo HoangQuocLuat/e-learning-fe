@@ -1,12 +1,13 @@
 import nProgress from 'nprogress'
 import React, { useEffect, useState } from 'react'
 import { Outlet, useNavigation } from 'react-router-dom'
-
+import { useNavigate } from 'react-router-dom'
+import { router_keys } from '@routers/key'
 type AppProps = {}
 
 const App: React.FC<React.PropsWithChildren<AppProps>> = () => {
   const [loading, setLoading] = useState<boolean>(true)
-
+  const navigate = useNavigate()
 
   const navigation = useNavigation()
   useEffect(() => {
@@ -20,18 +21,18 @@ const App: React.FC<React.PropsWithChildren<AppProps>> = () => {
   useEffect(() => {
     // check authen, role, ...
     setTimeout(() => {
-      // const pathname = window.location.pathname
-      // const logined = true
+      const pathname = window.location.pathname
+      const logined = true
       // if (logined)
       //   if (pathname === router_keys.login) {
-      //     navigate(router_keys.dashboard)
+      //     navigate(router_keys.home)
       //   }
 
-      // if (!logined) {
-      //   if (pathname !== router_keys.login) {
-      //     navigate(router_keys.login)
-      //   }
-      // }
+      if (!logined) {
+        if (pathname !== router_keys.login) {
+          navigate(router_keys.login)
+        }
+      }
 
       setLoading(false)
     }, 2000)

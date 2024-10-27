@@ -3,7 +3,7 @@ import { setContext } from '@apollo/client/link/context'
 import { getAuthenToken } from '@commons/cookies'
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:8989/api/v1/graphql/admin"
+  uri: "http://localhost:8989/api/v1/graphql/user"
 })
 
 const authLink = setContext((_, { headers }) => {

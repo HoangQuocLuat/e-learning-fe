@@ -52,10 +52,8 @@ const FixedHeader = styled.div<{ $collapsed?: boolean }>`
 const MainApp = styled.div`
   width: 100%;
   transition: width ${ANIMATION_SPEED}s;
-
   position: relative;
   overflow: hidden;
-  padding-top: ${HEADER_HEIGHT / 10 + TAG_VIEW_HEIGHT / 10}rem;
 `
 
 type DashboardLayoutProps = {}
@@ -67,11 +65,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren<DashboardLayoutProps>> =
     <LayoutStyled>
       <LayoutSider />
       <Wrap className={cx({ collapsed: sidebarCollapsed })}>
-        {/* <FixedHeader $collapsed={sidebarCollapsed}>
-          {showTagView ? <TagView /> : null}
-        </FixedHeader> */}
           <LayoutHeader />
-
         <MainApp>
           <Outlet />
         </MainApp>

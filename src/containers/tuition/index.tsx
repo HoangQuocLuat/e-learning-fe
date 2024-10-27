@@ -6,7 +6,6 @@ import { Tuition } from '@models/tuition';
 import { tuitionList } from '@graphql/query/admin/tuition-list';
 import DrawersListTuition, { DrawerTuitionMethods } from './drawerListTuition'
 import { useMounted } from '@hooks/lifecycle';
-import DrawersListAccount, { DrawerListAccountMethods } from '../accountList/drawerListAccount'
 
 type FetchParams = {
     month: string;
@@ -15,7 +14,6 @@ type FetchParams = {
 
 const TuitionContainer: React.FC = () => {
     const drawerRef = useRef<DrawerTuitionMethods>(null)
-    const drawerRef2 = useRef<DrawerListAccountMethods>(null)
     const [loading, setLoading] = useState(false);
     const [tuitionData, setTuitionData] = useState<{ [key: string]: Tuition[] }>({});
     

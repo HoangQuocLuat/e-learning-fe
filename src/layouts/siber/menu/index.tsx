@@ -37,14 +37,19 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
           style={{ color: '#3154A0', backgroundColor: '#F8F9FA' }}
           items={[
             {
-              key: '/home',
+              key: '',
               label: <Link to={router_keys.home}>Home</Link>,
               icon: <AppstoreOutlined />,
             },
             {
               key: '/schedules',
               icon: <FileDoneOutlined />,
-              label: <Link to={router_keys.schedulesUser}>Lịch học</Link>,
+              label: <Link to={router_keys.schedules}>Schedule</Link>,
+            },
+            {
+              key: '/tuition',
+              icon: <FileDoneOutlined />,
+              label: <Link to={router_keys.tuition}>Tuition</Link>,
             },
           ]}
         />

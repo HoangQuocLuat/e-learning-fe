@@ -1,9 +1,8 @@
 export const router_keys = {
     login: '/login',
-    home: '/home',
-    tuitionUser: '/tuitionUser',
-    schedulesUser: '/schedulesUser',
-    inforUser:'/inforUser',
+    home: '/',
+    tuitionUser: '/tuition',
+    schedulesUser: '/schedules',
     dashboard: '/dashboard',
     accountList: '/dashboard/accountList',
     schedules: '/dashboard/schedules',

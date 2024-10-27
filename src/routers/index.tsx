@@ -38,7 +38,7 @@ export const routers: DataRouteObject[] = [
         children: [
           {
             id: generateRandomId(),
-            path: 'home',
+            path: '',
             lazy: async () => {
               const { default: HomePage } = await import('@app/home')
               return {
@@ -61,7 +61,20 @@ export const routers: DataRouteObject[] = [
             meta: {
               title: 'Schedules of Student',
             },
-          }
+          },
+          {
+            id: generateRandomId(),
+            path: 'tuition',
+            lazy: async () => {
+              const { default: TuitionPage } = await import('@app/user/tuition')
+              return {
+                Component: TuitionPage,
+              }
+            },
+            meta: {
+              title: 'Tuition of Student',
+            },
+          },
         ]
       },
       {
