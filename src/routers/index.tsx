@@ -46,7 +46,7 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'Home',
+              title: 'Trang chủ',
             },
           },
           {
@@ -59,7 +59,7 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'Schedules of Student',
+              title: 'Lịch học cá nhân',
             },
           },
           {
@@ -72,7 +72,7 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'Tuition of Student',
+              title: 'Học phí cá nhân',
             },
           },
         ]
@@ -112,7 +112,7 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'AccountList',
+              title: 'Quản lý tài khoản',
             },
           },
         ]
@@ -132,7 +132,7 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'Schedules',
+              title: 'Quản lý lịch học',
             },
           },
         ]
@@ -152,7 +152,7 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'Class',
+              title: 'Quản lý lớp học',
             },
           },
         ]
@@ -172,7 +172,7 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'Tuition',
+              title: 'Quản lý học phí',
             },
           },
         ]
@@ -192,7 +192,27 @@ export const routers: DataRouteObject[] = [
               }
             },
             meta: {
-              title: 'Attendance',
+              title: 'Quản lý điểm danh',
+            },
+          },
+        ]
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'payment',
+            lazy: async () => {
+              const { default:  PaymentPage} = await import('@app/payment')
+              return {
+                Component: PaymentPage,
+              }
+            },
+            meta: {
+              title: 'Quản lý hóa đơn học phí',
             },
           },
         ]

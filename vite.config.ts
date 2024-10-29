@@ -25,7 +25,6 @@ const support_paths = [
 export default defineConfig({
   plugins: [
     react(),
-
     i18nDetector({
       localesPaths: ['./src/locales/messages'],
     }),

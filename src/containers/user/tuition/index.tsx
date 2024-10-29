@@ -6,6 +6,7 @@ import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { getTuition } from '@graphql/query/user/tuition';
 import { useMounted } from '@hooks/lifecycle';
+import TuitionPagination from './tuition-pagination'
 
 const TuitionContainer: React.FC = () => {
     const [loading, setLoading] = useState(false);
@@ -52,27 +53,6 @@ const handlePayment = async (app_user: string) => {
         alert('Thanh toán thất bại. Vui lòng thử lại.');
     }
 };
-
-// const checkPayment = async (app_user: string, tuition_id: string, app_trans_id: string) => {
-//     try {
-//         const response = await axios.post('http://127.0.0.1:8989/api/v1/payment/check', {
-//             app_trans_id:app_trans_id,
-//             user_id:app_user,
-//             tuition_id:tuition_id
-//         });
-//         if (response.data.Data?.status === 1) {
-//             alert(response.data.Data?.return_mess);
-//             return
-//         } else {
-//             throw new Error('thanh toán thất bại');
-//         }
-//     } catch (error) {
-//         console.error('Lỗi thanh toán:', error);
-//         alert(error);
-//     }
-// }
-
-// useEffect(()=>{checkPayment("66f384adc05fb211ffc0d8cf", tuitionID, transID)},[transID]) 
 
     const columns: TableProps<Tuition>['columns'] = [
         {
@@ -182,24 +162,7 @@ const handlePayment = async (app_user: string) => {
                     />
                 }
             </TableBox>
-            
-            {/* 2. bảng tổng hợp học phi */}
-            {/* <TableBox>
-                {
-                    //@ts-ignore
-                    <TableData
-                        // @ts-ignore
-                        columns={columns2}
-                        loading={loading}
-                        rowKey={record => record?.id ?? ''}
-                        dataSource={tuitionData}
-                        scroll={{ x: 600 }}
-                        pagination= {false}
-                        title={() => `Danh sách học phí theo tháng`}
-                    />
-                }
-        
-            </TableBox> */}
+            <TuitionPagination></TuitionPagination>
         </Wrap>
     )
 }
