@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react'
 import { Button, Space, TableProps, Upload, UploadProps, message, notification, Tag } from 'antd'
 import { Buttons, Header, TableBox, Wrap, TableData, BoxAction } from '../../../accountList/style'
 import { Payment } from '@models/payment'
-import { paymentPagination } from '@graphql/query/admin/payment-pagination'
+import { paymentPaginationByID } from '@graphql/query/user/payment-pagination'
 import { Pagination } from '@models/pagination'
 import { useMounted } from '@hooks/lifecycle'
 import { usePushShallowRoute } from '@hooks/router'
@@ -30,7 +30,7 @@ const tuitionPagination: React.FC = () => {
 
   const fetch = useCallback(({ page, limit, search }: FetchParams) => {
     setLoading(true)
-    paymentPagination({ page, limit, search })
+    paymentPaginationByID({ page, limit, search })
       .then(rPayment => {
         if (rPayment.success) {
           setLoading(false)
@@ -73,12 +73,7 @@ const tuitionPagination: React.FC = () => {
 
   const columns: TableProps<Payment>['columns'] = [
     {
-      title: 'Thời gian',
-      dataIndex: 'month',
-      key: 'month',
-    },
-    {
-      title: 'Học phí',
+      title: 'Mã giao dịch',
       dataIndex: 'transID',
       key: 'transID',
     },
@@ -114,7 +109,7 @@ const tuitionPagination: React.FC = () => {
             rowKey={record => record?.id ?? ''}
             dataSource={paymentData}
             scroll={{ x: 600 }}
-            title={() => 'Danh sách học phí cá nhân'}
+            title={() => 'Hóa đơn thanh toán tiền học trực tuyến'}
             pagination={{
               pageSize: page.limit ?? 12,
               current: page.current > 0 ? page.current : 1,

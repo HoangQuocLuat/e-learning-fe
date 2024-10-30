@@ -22,13 +22,14 @@ const TuitionContainer: React.FC = () => {
     const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
 
     const fetchTuition =({ month, year }: FetchParams) => {
+        console.log(month)
         setLoading(true);
         tuitionList({ month, year })
             .then((rTuition) => {
                 if (rTuition.success) {
                     setTuitionData((prevData) => ({
                         ...prevData,
-                        [month]: rTuition.data ?? [],
+                        [`${month}`]: rTuition.data ?? [],
                     }));
                 }
             })
@@ -41,15 +42,34 @@ const TuitionContainer: React.FC = () => {
     };
 
     // Mặc định sẽ load theo tháng hiện tại
-    useMounted(() => fetchTuition({ month: currentMonth, year: currentYear }));
-
+    // useMounted(() => fetchTuition({ month: currentMonth, year: currentYear }));
+    const handleCollapseChange = (activeKey: string | string[]) => {
+            const month = activeKey.toString().padStart(2, '0');
+            const year ="2024"
+            tuitionList({ month, year})
+            .then((rTuition) => {
+                if (rTuition.success) {
+                    setTuitionData((prevData) => ({
+                        ...prevData,
+                        [`${month}`]: rTuition.data ?? [],
+                    }));
+                }
+            })
+            .catch(() => {
+                notification.error({ message: 'Có lỗi xảy ra!' });
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+    
     // Tạo danh sách các Panel cho Collapse
     const items = months.map((month) => ({
         key: month,
         label: `Tháng ${month} - ${currentYear}`,
         children: (
             <List
-                dataSource={tuitionData[month] || []}
+                dataSource={tuitionData[month.padStart(2, '0')] || []}
                 renderItem={(item, index) => (
                     <List.Item key={index}>
                         <p>Học sinh: {item.user?.name}</p>
@@ -77,7 +97,7 @@ const TuitionContainer: React.FC = () => {
                 {loading ? (
                     <Spin />
                 ) : (
-                    <Collapse accordion>
+                    <Collapse accordion  onChange={handleCollapseChange} >
                         {items.map(item => (
                             <Collapse.Panel key={item.key} header={item.label}>
                                 {item.children}
