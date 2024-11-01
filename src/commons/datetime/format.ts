@@ -16,11 +16,13 @@ export const formatDate = (date: string, format?: string) => {
   return dateTime(date).format(format ?? HH_MM_SS_DD_MM_YYYY)
 }
 
-export const formatScheduleTime = (start: string, end: string) => {
+export const formatScheduleTime = (start?: any, end?: string) => {
+  console.log("aaadfdf",start)
   const startTime = dateTime(start)
   const endTime = dateTime(end)
 
   const hStart = startTime.format(HH_mm)
+  console.log("ddd", hStart)
   const hEnd = endTime.format(HH_mm)
 
   return `${hStart} - ${hEnd}`

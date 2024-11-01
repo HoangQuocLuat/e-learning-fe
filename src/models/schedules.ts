@@ -22,6 +22,9 @@ export class Schedules extends Base {
   end_date?: string
 
   @field()
+  day?: string
+
+  @field()
   end_time?: string
 
   @field()

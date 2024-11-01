@@ -1,13 +1,15 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
+import React, {useRef, useState } from 'react';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import ButtonDelete from './button-delete'
 import { Buttons, Wrap, Header } from '../accountList/style';
-import { Badge, Calendar, Modal, Button } from 'antd';
+import { Calendar, Modal, Button, Tag, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import DrawersSchedules, { DrawerSchedulesMethods } from './drawerSchedules';
 import { schedulesList } from '@graphql/query/admin/schedules-list';
 import { useMounted } from '@hooks/lifecycle';
 import { Schedules } from '@models/schedules';
 import {BoxAction, TableBox } from './style';
+import {formatScheduleTime} from '../../commons/datetime/format'
 
 const SchedulesContainer: React.FC = () => {
   const drawerRef = useRef<DrawerSchedulesMethods>(null);
@@ -21,6 +23,7 @@ const SchedulesContainer: React.FC = () => {
       .then((response) => {
         if (response.success) {
           setDataSchedulesList(response.data ?? []);
+          console.log(dataSchedulesList)
         } else {
           throw new Error('Failed to fetch schedules');
         }
@@ -31,30 +34,53 @@ const SchedulesContainer: React.FC = () => {
         setLoading(false);
       });
   }
+  console.log("aaaa")
 
   useMounted(() => fetchSchedulesList());
-
   const getListData = (value: Dayjs) => {
-    return dataSchedulesList.filter(schedule => {
-      
-      const isSameDayOfWeek = value.day() === schedule.day_of_week; 
-  
-      const startDate = dayjs(schedule.start_date); 
-      const endDate = dayjs(schedule.end_date);     
-      const isAfterStartDate = value.isSame(startDate, 'day') || value.isAfter(startDate, 'day');
-      const isBeforeEndDate = value.isSame(endDate, 'day') || value.isBefore(endDate, 'day');
-
-      return isSameDayOfWeek && isAfterStartDate && isBeforeEndDate
-    });
+    const formattedDate = value.format('YYYY-MM-DD');
+    return dataSchedulesList.filter(schedule => dayjs(schedule.day).format('YYYY-MM-DD') === formattedDate);
   };
   
   const dateCellRender = (value: Dayjs) => {
     const listData = getListData(value);
+    if (listData.length === 0) {
+      return null;
+    }
+  
     return (
-      <ul className="events">
+      <ul className="events" style={{ padding: 0, margin: 0 }}>
         {listData.map((item) => (
-          <li key={item.id} onClick={() => showDetails(item)}>
-            <Badge status="success" text={item.schedules_type} />
+          <li
+            key={item.id}
+            onClick={() => showDetails(item)}
+            style={{
+              listStyleType: 'none',
+              padding: "8px 12px",
+              marginTop: 3,
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              border: "1px solid #f0f0f0",
+              borderRadius: 4,
+              background: "#fff"
+            }}
+          >
+            <Tag 
+              color={item.schedules_type === 'Học bình thường' ? 'green' : item.schedules_type === 'Làm kiểm tra' ? 'red' : 'gold'}
+            >
+              {item.class?.class_name}
+            </Tag>
+            
+            <Space size="middle">
+              <Button
+                icon={<EditOutlined />}
+                style={{ border: 'none', width: 10, height: 10 }}
+                onClick={() => {drawerRef.current?.open(item)}}
+              />
+              <ButtonDelete record={item} fetchSchedules={fetchSchedulesList} />
+            </Space>
           </li>
         ))}
       </ul>
@@ -86,7 +112,7 @@ const SchedulesContainer: React.FC = () => {
       <Calendar cellRender={dateCellRender} />
       {/* Modal to display schedule details */}
       <Modal
-        title={`Details for ${selectedSchedule?.description}`}
+        title={`Thông tin lịch`}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={[
@@ -97,13 +123,17 @@ const SchedulesContainer: React.FC = () => {
       >
         {selectedSchedule && (
           <div>
-            <p><strong>Class name:</strong> {selectedSchedule.class?.class_name}</p>
-            <p><strong>Type:</strong> {selectedSchedule.schedules_type}</p>
-            <p><strong>Day of Week:</strong> {selectedSchedule.day_of_week}</p>
-            <p><strong>Start Time:</strong> {selectedSchedule.start_time}</p>
-            <p><strong>End Time:</strong> {selectedSchedule.end_time}</p>
-            <p><strong>Start Date:</strong> {selectedSchedule.start_date}</p>
-            <p><strong>End Date:</strong> {selectedSchedule.end_date}</p>
+            <p><strong>Tên lớp học:</strong> {selectedSchedule.class?.class_name}</p>
+            <p><strong>Loại lịch:</strong> {selectedSchedule.schedules_type}</p>
+            <p><strong>Thời gian:</strong>
+            {selectedSchedule.start_time && selectedSchedule.end_time
+                  ? formatScheduleTime(
+                      selectedSchedule.start_time,
+                      selectedSchedule.end_time
+                    )
+                  : 'Time not available'}
+            </p>
+            <p><strong>Thông tin chi tiết:</strong> {selectedSchedule?.description}</p>
           </div>
         )}
       </Modal>

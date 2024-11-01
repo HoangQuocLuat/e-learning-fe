@@ -14,7 +14,6 @@ import { AUTHEN_TOKEN_KEY } from '@constants/key'
 import DrawersListAccount, { DrawerListAccountMethods } from './drawerListAccount'
 import SearchAccount from './search-account'
 
-
 type FetchParams = {
   page?: number
   limit?: number

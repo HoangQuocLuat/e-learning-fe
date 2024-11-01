@@ -75,6 +75,19 @@ export const routers: DataRouteObject[] = [
               title: 'Học phí cá nhân',
             },
           },
+          {
+            id: generateRandomId(),
+            path: 'profile',
+            lazy: async () => {
+              const { default: ProfilePage } = await import('@app/user/profile')
+              return {
+                Component: ProfilePage,
+              }
+            },
+            meta: {
+              title: 'Thông tin cá nhân',
+            },
+          },
         ]
       },
       {

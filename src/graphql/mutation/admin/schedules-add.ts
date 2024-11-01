@@ -9,11 +9,10 @@ const schedulesAddGql = gql`
       id
       start_time
       end_time
-      start_date
-      end_date
       schedules_type
       description
       day_of_week
+      day
     }
   }
 `;

@@ -16,8 +16,7 @@ const scheduleGql = gql`
     schedules(userID: $userID) {
         id
         day_of_week
-        start_date
-        end_date
+        day
         start_time
         end_time
         schedules_type

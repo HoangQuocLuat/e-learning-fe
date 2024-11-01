@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, forwardRef,useCallback, useRef, useEffect, useState} from 'react';
-import { Modal, Form, Input, TimePicker, Button, Select, DatePicker,notification} from 'antd';
+import { Form, Input, TimePicker, Button, Select, DatePicker,notification} from 'antd';
 import { CheckOutlined } from '@ant-design/icons'
 import { Schedules } from '@models/schedules';
 import { Class } from '@models/class';
@@ -14,17 +14,18 @@ const scheduleOptions = [
 ];
 
 const dayOfWeekOptions = [
-  { value: 0, label: 'Monday' },
-  { value: 1, label: 'Tuesday' },
-  { value: 2, label: 'Wednesday' },
-  { value: 3, label: 'Thursday' },
-  { value: 4, label: 'Friday' },
-  { value: 5, label: 'Saturday' },
-  { value: 6, label: 'Sunday' },
+  { value: 1, label: 'Monday' },
+  { value: 2, label: 'Tuesday' },
+  { value: 3, label: 'Wednesday' },
+  { value: 4, label: 'Thursday' },
+  { value: 5, label: 'Friday' },
+  { value: 6, label: 'Saturday' },
+  { value: 7, label: 'Sunday' },
 ];
 export type AddScheduleFormProps = {
   dataSchedules?: Schedules;
   onAddSchedules?: (schedule: Schedules) => Promise<boolean>;
+  onUpdateSchedules?: (input: Schedules) => Promise<boolean>;
 };
 
 export type AddScheduleFormRef = {
@@ -32,7 +33,10 @@ export type AddScheduleFormRef = {
 };
 
 const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, AddScheduleFormProps> = (
-  {dataSchedules, onAddSchedules = () => Promise.resolve(false)},
+  {dataSchedules, 
+   onAddSchedules = () => Promise.resolve(false),
+   onUpdateSchedules = () => Promise.resolve(false),
+  },
   ref
 ) => {
   const [form] = Form.useForm();
@@ -79,18 +83,28 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
 
   const onFinish = () => {
     const input = { ...oldData.current } as Schedules;
-
-    input.class_id = form.getFieldValue('class_id');
+    if (!dataSchedules) {
+      input.class_id = form.getFieldValue('class_id');
+    }
+    if (dataSchedules) {
+      input.id = dataSchedules.id;
+    }
+    input.end_date = form.getFieldValue('endDate').format('DD-MM-YYYY');
+    input.start_date = form.getFieldValue('startDate').format('DD-MM-YYYY');
+    input.day_of_week = form.getFieldValue('day_of_week');
     input.description = form.getFieldValue('description');
     input.schedules_type = form.getFieldValue('schedulesType');
-    input.day_of_week = form.getFieldValue('day_of_week');
     input.start_time = form.getFieldValue('startTime').format('HH:mm');
     input.end_time = form.getFieldValue('endTime').format('HH:mm');
-    input.start_date = form.getFieldValue('startDate').format('DD-MM-YYYY');
-    input.end_date = form.getFieldValue('endDate').format('DD-MM-YYYY');
+    // input.start_date = form.getFieldValue('startDate').format('DD-MM-YYYY');
+    // input.end_date = form.getFieldValue('endDate').format('DD-MM-YYYY');
 
     if (!dataSchedules) {
       onAddSchedules?.(input);
+    }
+
+    if (dataSchedules) {
+      onUpdateSchedules?.(input);
     }
 
     // form.resetFields();
@@ -109,10 +123,10 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
       }}
     >
       <div>
-        <Form.Item
+        {!dataSchedules && <Form.Item
           label="Chọn lớp học"
           name="class_id"
-          rules={[{ required: true, message: 'Vui lòng chọn lớp học!' }]}
+          rules={ dataSchedules ? []:[{required: true, message: 'Vui lòng chọn lớp học!' }]}
         >
           <Select placeholder="Chọn lớp học" style={{ width: 200 }}>
             {classData?.map(cls => (
@@ -122,6 +136,7 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
             ))}
           </Select>
         </Form.Item>
+        }
         <Form.Item
           label="Nội dung"
           name="description"
@@ -142,7 +157,7 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
         ))}
       </Select>
         </Form.Item>
-        <Form.Item
+        {!dataSchedules &&<Form.Item
           label="Ngày trong tuần"
           name="day_of_week"
           rules={[{ required: true, message: 'Vui lòng chọn ngày trong tuần!' }]}
@@ -154,21 +169,21 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
           </Select.Option>
         ))}
       </Select>
-        </Form.Item>
-        <Form.Item
+        </Form.Item>}
+        {!dataSchedules &&<Form.Item
           label="Ngày bắt đầu"
           name="startDate"
           rules={[{ required: true, message: 'Vui lòng chọn ngày bắt đầu!' }]}
         >
           <DatePicker format="DD-MM-YYYY" placeholder="Chọn ngày bắt đầu" />
-        </Form.Item>
-        <Form.Item
+        </Form.Item>}
+        {!dataSchedules &&<Form.Item
           label="Ngày kết thúc"
           name="endDate"
           rules={[{ required: true, message: 'Vui lòng chọn ngày kết thúc!' }]}
         >
           <DatePicker format="DD-MM-YYYY" placeholder="Chọn ngày kết thúc" />
-        </Form.Item>
+        </Form.Item>}
         <Form.Item
           label="Thời gian bắt đầu"
           name="startTime"

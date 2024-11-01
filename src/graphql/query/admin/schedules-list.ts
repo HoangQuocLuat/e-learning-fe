@@ -10,8 +10,7 @@ const schedulesListGql = gql`
     schedulesList {
         id
         day_of_week
-        start_date
-        end_date
+        day
         start_time
         end_time
         schedules_type
@@ -37,6 +36,7 @@ export const schedulesList = () => {
             },
         })
         .then(r => {
+            console.log(r.data?.schedulesList)
             return {
                 success: true,
                 data: r.data?.schedulesList,

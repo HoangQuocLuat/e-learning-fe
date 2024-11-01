@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Buttons, Wrap, Header } from '../../accountList/style';
-import { Badge, Calendar, Modal, Button } from 'antd';
+import { Badge, Calendar, Modal, Button, Tag } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { getSchedules } from '@graphql/query/user/schedule';
 import { useMounted } from '@hooks/lifecycle';
@@ -33,26 +33,22 @@ const SchedulesContainer: React.FC = () => {
   useMounted(() => fetchSchedulesList());
 
   const getListData = (value: Dayjs) => {
-    return dataSchedulesList.filter(schedule => {
-      
-      const isSameDayOfWeek = value.day() === schedule.day_of_week; 
-  
-      const startDate = dayjs(schedule.start_date); 
-      const endDate = dayjs(schedule.end_date);     
-      const isAfterStartDate = value.isSame(startDate, 'day') || value.isAfter(startDate, 'day');
-      const isBeforeEndDate = value.isSame(endDate, 'day') || value.isBefore(endDate, 'day');
-
-      return isSameDayOfWeek && isAfterStartDate && isBeforeEndDate
-    });
+    const formattedDate = value.format('YYYY-MM-DD');
+    return dataSchedulesList.filter(schedule => dayjs(schedule.day).format('YYYY-MM-DD') === formattedDate);
   };
   
   const dateCellRender = (value: Dayjs) => {
     const listData = getListData(value);
+    if (listData.length === 0) {
+      return null;
+    }
     return (
       <ul className="events">
         {listData.map((item) => (
-          <li key={item.id} onClick={() => showDetails(item)}>
-            <Badge status="success" text={item.schedules_type} />
+          <li key={item.id} onClick={() => showDetails(item)} style={{ listStyleType: 'none', padding: 0, marginTop: 3}}>
+             <Tag color={item.schedules_type === 'Học bình thường' ? 'green' : item.schedules_type === 'Làm kiểm tra' ? 'red' : 'gold'}>
+            {item.schedules_type}
+            </Tag>
           </li>
         ))}
       </ul>
@@ -71,6 +67,7 @@ const SchedulesContainer: React.FC = () => {
     setSelectedSchedule(null);
   };
 
+  console.log("aaaa", selectedSchedule?.start_time)
   return (
     <Wrap>
       <TableBox>      

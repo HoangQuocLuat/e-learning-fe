@@ -99,47 +99,6 @@ const handlePayment = async (app_user: string) => {
           ),
         },
       ]
-
-      const columns2 = [
-        {
-            title: 'Tháng',
-            dataIndex: 'total_fee',
-            key: 'total_fee',
-          },
-        {
-          title: 'Tổng tiền',
-          dataIndex: 'total_fee',
-          key: 'total_fee',
-        },
-        {
-          title: 'Số tiền cần thanh toán',
-          dataIndex: 'discount',
-          key: 'discount',
-        },
-        {
-          title: 'Số tiền đã thanh toán',
-          dataIndex: 'remaining_fee',
-          key: 'remaining_fee',
-        },
-        {
-          title: 'Số tiền còn lại',
-          dataIndex: 'paid_amount',
-          key: 'paid_amount',
-        },
-        {
-          title: 'Hành động',
-          key: 'action',
-          render: () => (
-            <Space size="middle">
-              <Button
-                icon={<WalletOutlined />}
-                onClick={() => {console.log(), alert("Bạn muốn thanh toán ??",)}}
-                style={{ border: 'none' }}
-              />
-            </Space>
-          ),
-        },
-      ]
     return (
         <Wrap>
             {/* 2 phần chính 

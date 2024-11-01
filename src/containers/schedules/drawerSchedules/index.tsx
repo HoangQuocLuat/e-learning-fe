@@ -1,9 +1,10 @@
-import React,{ useImperativeHandle, forwardRef, useState } from 'react'
+import { useImperativeHandle, forwardRef, useState } from 'react'
 import { DrawerStyle, Title, Wrap } from './styles'
 import FormInputSchedules from '../formSchedules'
 import { notification } from 'antd'
 import { Schedules } from '@models/schedules';
 import { schedulesAdd } from '@graphql/mutation/admin/schedules-add'
+import { schedulesUpdate } from '@graphql/mutation/admin/schedules-update';
 
 export type DrawerSchedulesMethods = {
   open: (data?: Schedules) => void
@@ -62,31 +63,34 @@ const DrawersSchedules = forwardRef<DrawerSchedulesMethods, DrawersSchedulesProp
         })
     }
 
-    // const onUpdateAccount = (input: Account) => {
-    //   return accountUpdate({
-    //     input: {
-    //       id: input.id,
-    //       originalCode: input.originalCode,
-    //       internationalCode: input.internationalCode,
-    //       destination: input.destination,
-    //       status: input.status,
-    //     },
-    //   })
-    //     .then(rEntry => {
-    //       if (rEntry.success) {
-    //         notification.success({ message: 'Cập nhật thông tin đơn hàng thành công' })
-    //         onEntryUpdateSucces()
-    //         onClose()
-    //       }
-    //       if (!rEntry.success) {
-    //         notification.error({ message: 'Cập nhật thông tin đơn hàng không thành công' })
-    //       }
-    //       return Promise.resolve(rEntry.success ?? false)
-    //     })
-    //     .catch(() => {
-    //       return Promise.resolve(false)
-    //     })
-    // }
+    const onUpdateSchedules = (input: Schedules) => {
+      return schedulesUpdate({
+        input: {
+          id: input.id,
+          day_of_week: input.day_of_week,
+          start_date: input.start_date,
+          end_date: input.end_date,
+          start_time: input.start_time,
+          end_time: input.end_time,
+          schedules_type: input.schedules_type,
+          description: input.description,
+        },
+      })
+        .then(rSchedules => {
+          if (rSchedules.success) {
+            notification.success({ message: 'Cập nhật lịch thành công' })
+            onSchedulesUpdateSucces()
+            onClose()
+          }
+          if (!rSchedules.success) {
+            notification.error({ message: 'Cập nhật lịch không thành công' })
+          }
+          return Promise.resolve(rSchedules.success ?? false)
+        })
+        .catch(() => {
+          return Promise.resolve(false)
+        })
+    }
 
     return (
       <DrawerStyle
@@ -99,6 +103,7 @@ const DrawersSchedules = forwardRef<DrawerSchedulesMethods, DrawersSchedulesProp
           <FormInputSchedules
             dataSchedules={dataSchedules}
             onAddSchedules={onAddSchedules}
+            onUpdateSchedules={onUpdateSchedules}
           />
         </Wrap>
       </DrawerStyle>
