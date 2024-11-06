@@ -1,6 +1,6 @@
-import React, { useCallback, useState, useRef } from 'react';
-import { Buttons, Wrap, Header, TableBox } from '../accountList/style';
-
+import React from 'react';
+import { Wrap, Header, TableBox } from '../accountList/style';
+import BarChart from './barchart'
 const DashBoardContainer: React.FC = () => {
     return (
         <Wrap>
@@ -8,7 +8,7 @@ const DashBoardContainer: React.FC = () => {
                 <h2>Dash board</h2>
             </Header>
             <TableBox>
-                
+                <BarChart></BarChart>
             </TableBox>
         </Wrap>
     );

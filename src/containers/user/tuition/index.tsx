@@ -40,7 +40,7 @@ const handlePayment = async (app_user: string) => {
             app_user: app_user,
         });
         console.log(response.data)
-        if (response.data.Status === 'PaymentCompleted') {
+        if (response.data.Message === 'Hoc phi da thanh toan') {
             alert(response.data.Message);
         }else if(response.data.Data?.result?.return_code === 1) {
             setTransID(response.data.Data?.result?.trans_id)
@@ -83,8 +83,6 @@ const handlePayment = async (app_user: string) => {
               <Button
                 icon={<WalletOutlined />}
                 onClick={() =>{
-                    console.log("re", record)
-                    console.log("use", record.user)
                     if (record.user?.id) {
                         handlePayment(record.user?.id)
                     }

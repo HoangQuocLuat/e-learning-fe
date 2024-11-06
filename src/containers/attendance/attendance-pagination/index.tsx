@@ -1,12 +1,13 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { TableProps, notification, Tag } from 'antd'
-import { TableBox, TableData, } from '../../../accountList/style'
-import { Payment } from '@models/payment'
-import { paymentPaginationByID } from '@graphql/query/user/payment-pagination'
+import { TableProps, notification} from 'antd'
+import { TableBox, TableData, } from '../../accountList/style'
+import { Attendance } from '@models/attendance'
+import { attendancePagination } from '@graphql/query/admin/attendance-pagination'
 import { Pagination } from '@models/pagination'
 import { useMounted } from '@hooks/lifecycle'
 import { usePushShallowRoute } from '@hooks/router'
 import { useParams } from 'react-router-dom'
+import {formatDate} from '../../../commons/datetime/format'
 
 type FetchParams = {
   page?: number
@@ -16,12 +17,11 @@ type FetchParams = {
 
 export type InputSearch = {
   name: string
-  phone: string
 }
 
-const tuitionPagination: React.FC = () => {
+const AttenPagination: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [paymentData, setPaymentData] = useState<Payment[]>([])
+  const [attendanceData, setAttendanceData] = useState<Attendance[]>([])
   const [page, setPage] = useState<Pagination>(Pagination.default)
   const onPushShallow = usePushShallowRoute()
   //@ts-ignore
@@ -30,12 +30,13 @@ const tuitionPagination: React.FC = () => {
 
   const fetch = useCallback(({ page, limit, search }: FetchParams) => {
     setLoading(true)
-    paymentPaginationByID({ page, limit, search })
-      .then(rPayment => {
-        if (rPayment.success) {
+    attendancePagination({ page, limit, search })
+      .then(r => {
+        console.log("aa", r.data)
+        if (r.success) {
           setLoading(false)
-          setPaymentData(rPayment.data ?? [])
-          setPage(rPayment.paging!)
+          setAttendanceData(r.data ?? [])
+          setPage(r.paging!)
         }
       })
       .catch(() => {
@@ -71,32 +72,24 @@ const tuitionPagination: React.FC = () => {
 
   useMounted(() => fetch({ page: 1, limit: page?.limit }))
 
-  const columns: TableProps<Payment>['columns'] = [
+  const columns: TableProps<Attendance>['columns'] = [
     {
-      title: 'Mã giao dịch',
-      dataIndex: 'transID',
-      key: 'transID',
+      title: 'Tên học sinh',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
-      title: 'Số tiền đã thanh toán',
-      dataIndex: 'amount',
-      key: 'amount',
+      title: 'Thời gian vào',
+      dataIndex: 'time_check_in',
+      key: 'time_check_in',
+      render: (time: string) => formatDate(time, 'HH:mm:ss DD/MM/YYYY')
     },
     {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (dataIndex) => (
-        <Tag color={dataIndex === 'Thanh toán thành công' ? 'green' : dataIndex === 'Đang thanh toán' ? 'blue' : 'red'}>
-            {dataIndex}
-        </Tag>
-      ),
-    },
-    {
-        title: 'Ngày thực hiện giao dịch',
-        dataIndex: 'date',
-        key: 'date',   
-    },
+      title: 'Thời gian ra',
+      dataIndex: 'time_check_out',
+      key: 'time_check_out',
+      render: (time: string | null) => time ? formatDate(time, 'HH:mm:ss DD/MM/YYYY') : '0'
+    }    
   ]  
 
   return (
@@ -107,9 +100,9 @@ const tuitionPagination: React.FC = () => {
             columns={columns}
             loading={loading}
             rowKey={record => record?.id ?? ''}
-            dataSource={paymentData}
+            dataSource={attendanceData}
             scroll={{ x: 600 }}
-            title={() => 'Hóa đơn thanh toán tiền học trực tuyến'}
+            title={() => 'Danh sách điểm danh trong tháng'}
             pagination={{
               pageSize: page.limit ?? 12,
               current: page.current > 0 ? page.current : 1,
@@ -132,4 +125,4 @@ const tuitionPagination: React.FC = () => {
   )
 }
 
-export default tuitionPagination
+export default AttenPagination

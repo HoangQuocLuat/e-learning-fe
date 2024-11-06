@@ -29,7 +29,6 @@ const ListClass: React.FC = () => {
         if (rClass.success) {
           setLoading(false)
           setClassData(rClass.data ?? [])
-          // setPage(rClass.paging!)
         }
       })
       .catch(() => {
