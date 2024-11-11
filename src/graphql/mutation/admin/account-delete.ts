@@ -4,20 +4,15 @@ import { handleGraphqlError } from '@graphql/handle'
 import { Account } from '@models/account'
 
 const accountDeleteGql = gql`
-  mutation AccountDelete($data: AccountDelete!) {
-    accountDelete(data: $data) {
-      id
-      email
-      role
-      status
-    }
+  mutation UserDelete($data: UserDelete!) {
+    userDelete(data: $data)
   }
 `
 
 export const accountDelete = (p: { id: string }) => {
   return client
     .mutate<{
-      accountDelete: BaseResponseData<Account>
+      aDelete: BaseResponseData<Account>
     }>({
       mutation: accountDeleteGql,
       variables: {
@@ -26,8 +21,8 @@ export const accountDelete = (p: { id: string }) => {
     })
     .then(r => {
       return {
-        success: r.data?.accountDelete?.status,
-        data: Account.fromJson(r.data?.accountDelete),
+        success: r.data,
+        data: Account.fromJson(r.data?.aDelete),
       }
     })
     .catch((e: ApolloError) => {

@@ -1,7 +1,10 @@
-import React, { useImperativeHandle, forwardRef, useRef, useEffect } from 'react'
-import { Button, Form, Input, Select } from 'antd'
+import React, { useImperativeHandle, forwardRef, useRef, useEffect, useState, useCallback } from 'react'
+import { Button, Form, Input, Select, notification } from 'antd'
 import { CheckOutlined } from '@ant-design/icons'
 import { Account } from '@models/account'
+import { Class } from '@models/class';
+import { classList } from '@graphql/query/admin/class-list'
+import { useMounted } from '@hooks/lifecycle'
 
 export type FormInputProps = {
   dataAccount?: Account
@@ -22,6 +25,7 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
   },
   ref,
 ) => {
+
   const [form] = Form.useForm()
   const oldData = useRef<Account>(Account.default)
   useImperativeHandle(ref, () => ({
@@ -38,7 +42,8 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
         name: dataAccount.name,
         dateBirth: dataAccount.date_birth,
         phone: dataAccount.phone,
-        address: dataAccount.address
+        address: dataAccount.address,
+        status: dataAccount.status
       })
     }
     if (!dataAccount) {
@@ -46,11 +51,28 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
     }
   }, [dataAccount])
 
+  const [classData, setClassData] = useState<Class[]>([])
+  const fetchClassList = useCallback(() => {
+    classList()
+      .then(rClass => {
+        if (rClass.success) {
+          setClassData(rClass.data ?? [])
+          // setPage(rClass.paging!)
+        }
+      })
+      .catch(() => {
+        notification.error({ message: 'Có lỗi xảy ra!' })
+      })
+  }, [])
+
+  useMounted(() => fetchClassList())
+
   const onFinish = () => {
     const input = Account.clone(oldData.current)
     if (dataAccount) {
       input.id = dataAccount.id
     }
+    input.class_id = form.getFieldValue('class_id')
     input.user_name = form.getFieldValue('user_name')
     input.password = form.getFieldValue('password')
     input.role = form.getFieldValue('role')
@@ -79,6 +101,19 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
       }}
     >
       <div>
+        <Form.Item
+          label="Chọn lớp học"
+          name="class_id"
+          rules={[{required: true, message: 'Vui lòng chọn lớp học!' }]}
+        >
+          <Select placeholder="Chọn lớp học" style={{ width: 200 }}>
+            {classData?.map(cls => (
+              <Select.Option key={cls.id} value={cls.id}>
+                {cls.class_name} {/* Hiển thị tên lớp học */}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
         <Form.Item
           label="Tài khoản"
           name="user_name"

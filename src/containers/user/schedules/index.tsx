@@ -67,7 +67,6 @@ const SchedulesContainer: React.FC = () => {
     setSelectedSchedule(null);
   };
 
-  console.log("aaaa", selectedSchedule?.start_time)
   return (
     <Wrap>
       <TableBox>      

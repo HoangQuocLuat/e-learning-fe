@@ -2,14 +2,16 @@ import { field } from '@decorators/field'
 import { model } from '@decorators/model'
 import clone from 'lodash/clone'
 import { Base } from './base'
-
+import {Class} from './class'
 @model()
 export class Account extends Base {
+  @field()
+  class?: Class
   @field()
   class_id?: string
 
   @field()
-  status?: number
+  status?: string
 
   @field()
   user_name?: string
@@ -34,6 +36,12 @@ export class Account extends Base {
   
   @field()
   address?: string
+
+  @field()
+  avatar?: string
+
+  @field()
+  user_type?: number
 
   public toAddJson() {
     return {

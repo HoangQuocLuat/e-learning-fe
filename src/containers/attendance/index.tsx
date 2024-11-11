@@ -76,23 +76,28 @@ const AttendanceContainer: React.FC = () => {
 
     const handleCheckIn = async () => {
         if (!videoRef.current) return;
-
+    
         // Capture the current frame
         const canvas = document.createElement('canvas');
         canvas.width = videoRef.current.videoWidth;
         canvas.height = videoRef.current.videoHeight;
         const context = canvas.getContext('2d');
-
+    
         if (context) {
             context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-
+    
             // Convert the captured frame to a data URL
             const imageDataUrl = canvas.toDataURL('image/jpeg');
+            
             if (imageDataUrl === "") {
-                alert("Hãy thử lại")
+                alert("Hãy thử lại");
                 console.error('Failed to capture frame');
                 return;
             }
+    
+            // Kiểm tra dữ liệu trước khi gửi
+            console.log('Captured image data URL:', imageDataUrl);
+    
             // Send the image data to the backend
             try {
                 const response = await fetch('http://127.0.0.1:8989/api/v1/test/openCam', {
@@ -102,17 +107,18 @@ const AttendanceContainer: React.FC = () => {
                     },
                     body: JSON.stringify({ image: imageDataUrl, class_id: selectedClassId }),
                 });
+    
                 const result = await response.json();
-                console.log(result)
-                if (result?.message?.Status === 0) { // không tìm thấy mặt
-                    alert(result?.message?.Message)
-                }else if (result?.message?.Status === 2) { // khuôn mặt ko có trong lớp 
-                    alert(result?.message?.Message)
-                }else if (result?.message?.Status === 3) {
-                    alert(result?.message?.Message)
-                }else if (result?.Status === 200) {
+                console.log(result);
+    
+                if (result?.message?.Status === 0) {
+                    alert(result?.message?.Message);
+                } else if (result?.message?.Status === 2) {
+                    alert(result?.message?.Message);
+                } else if (result?.message?.Status === 3) {
+                    alert(result?.message?.Message);
+                } else if (result?.Status === 200) {
                     setAttendanceData([result?.Data]);
-                    console.log(result?.message)
                     console.log('Updated attendanceData:', [result?.Data]);
                 }
             } catch (error) {

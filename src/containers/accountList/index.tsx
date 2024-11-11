@@ -9,6 +9,8 @@ import { useMounted } from '@hooks/lifecycle'
 import { usePushShallowRoute } from '@hooks/router'
 import { useParams } from 'react-router-dom'
 import ButtonDelete from './button-delete'
+import ButtonBan from './button-ban'
+import ButtonUnban from './button-unban'
 import Cookies from 'js-cookie'
 import { AUTHEN_TOKEN_KEY } from '@constants/key'
 import DrawersListAccount, { DrawerListAccountMethods } from './drawerListAccount'
@@ -144,6 +146,27 @@ const ListAccount: React.FC = () => {
               })
             }
           />
+          {record?.status === "đang hoạt động" ? (
+      <ButtonBan
+        record={record}
+        fetchEntry={() =>
+          fetch({
+            page: page.current,
+            limit: page.limit ?? 10,
+          })
+        }
+      />
+    ) : (
+      <ButtonUnban
+        record={record}
+        fetchEntry={() =>
+          fetch({
+            page: page.current,
+            limit: page.limit ?? 10,
+          })
+        }
+      />
+    )}
         </Space>
       ),
     },

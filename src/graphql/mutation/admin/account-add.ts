@@ -27,6 +27,7 @@ export const accountAdd: BaseApiFunction<Account> = (p) => {
       mutation: accountAddGql,
       variables: {
         data: {
+          class_id: p.input?.class_id,
           user_name: p.input?.user_name,
           password: p.input?.password,
           role: p.input?.role,

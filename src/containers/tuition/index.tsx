@@ -11,9 +11,11 @@ type FetchParams = {
     year: string;
 };
 
+
 const TuitionContainer: React.FC = () => {
     const drawerRef = useRef<DrawerTuitionMethods>(null)
     const [loading, setLoading] = useState(false);
+    const [selectedYear, setSelectedYear] = useState<string>('2024');
     const [tuitionData, setTuitionData] = useState<{ [key: string]: Tuition[] }>({});
     
     const currentYear = new Date().getFullYear().toString();
@@ -44,7 +46,8 @@ const TuitionContainer: React.FC = () => {
     // useMounted(() => fetchTuition({ month: currentMonth, year: currentYear }));
     const handleCollapseChange = (activeKey: string | string[]) => {
             const month = activeKey.toString().padStart(2, '0');
-            const year ="2024"
+            const year = selectedYear
+            console.log("aa", selectedYear)
             tuitionList({ month, year})
             .then((rTuition) => {
                 if (rTuition.success) {
@@ -65,7 +68,7 @@ const TuitionContainer: React.FC = () => {
     // Tạo danh sách các Panel cho Collapse
     const items = months.map((month) => ({
         key: month,
-        label: `Tháng ${month} - ${currentYear}`,
+        label: `Tháng ${month}`,
         children: (
             <List
                 dataSource={tuitionData[month.padStart(2, '0')] || []}
@@ -87,10 +90,26 @@ const TuitionContainer: React.FC = () => {
         ),
     }));
 
+    const handleChangeMonth = (e) => {
+        setSelectedYear(e.target.value)
+        fetchTuition({
+            month: currentMonth,
+            year: selectedYear,
+        });
+    }
+
     return (
         <Wrap>
             <Header>
-                <h2>Quản lý học phí năm {currentYear}</h2>
+                <h2>Quản lý học phí năm {selectedYear}</h2>
+                <select
+                    id="yearSelect"
+                    value={selectedYear}
+                    onChange={(e) => handleChangeMonth}
+                >
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                </select>
             </Header>
             <TableBox>
                 {loading ? (

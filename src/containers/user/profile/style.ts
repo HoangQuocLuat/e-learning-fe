@@ -56,3 +56,7 @@ export const BoxAction = styled.div`
   }
 `
 
+export const FormInfor = styled.div`
+  display: flex
+  
+`
