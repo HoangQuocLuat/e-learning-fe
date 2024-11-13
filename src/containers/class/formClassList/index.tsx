@@ -6,6 +6,7 @@ import { Class } from '@models/class';
 export type AddClassFormProps = {
   dataClass?: Class;
   onAddClass?: (input: Class) => Promise<boolean>;
+  onUpdateClass?: (input: Class) => Promise<boolean>;
 };
 
 export type AddClassFormRef = {
@@ -13,7 +14,9 @@ export type AddClassFormRef = {
 };
 
 const FormInputListClass: React.ForwardRefRenderFunction<AddClassFormRef, AddClassFormProps> = (
-  {dataClass, onAddClass = () => Promise.resolve(false)},
+  {dataClass, 
+  onAddClass = () => Promise.resolve(false),
+  onUpdateClass = () => Promise.resolve(false),},
   ref
 ) => {
   const [form] = Form.useForm();
@@ -37,14 +40,21 @@ const FormInputListClass: React.ForwardRefRenderFunction<AddClassFormRef, AddCla
 
   const onFinish = () => {
     const input = { ...oldData.current } as Class;
-
+    if (dataClass) {
+      input.id = dataClass.id;
+    }
     input.class_name = form.getFieldValue('class_name');
     if (!dataClass) {
       onAddClass?.(input);
     }
 
+    if (dataClass) {
+      onUpdateClass?.(input);
+    }
+
     form.resetFields();
   };
+
 
   return(
     <Form
@@ -60,7 +70,7 @@ const FormInputListClass: React.ForwardRefRenderFunction<AddClassFormRef, AddCla
       <div>
         <Form.Item
           label="Tên lớp học"
-          name=""
+          name="class_name"
           rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
         >
           <Input placeholder="" />

@@ -5,7 +5,6 @@ import { useMounted } from '@hooks/lifecycle';
 import { revenueByMonthCurent } from '@graphql/query/admin/total-revenue-by-month-curent';
 const CardTotalRevenueByMonthCurent: React.FC = () => {
   const currentMonth = (new Date().getMonth() + 1).toString(); 
-  console.log("aa", currentMonth)
   const [data, setData] = useState<number | null>(null)
   const fetch = () => {
     revenueByMonthCurent()

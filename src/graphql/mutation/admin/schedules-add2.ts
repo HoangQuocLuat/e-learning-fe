@@ -4,8 +4,8 @@ import { handleGraphqlError } from '@graphql/handle'
 import { Schedules } from '@models/schedules'
 
 const schedulesAddGql = gql`
-  mutation SchedulesAdd($data: SchedulesAdd!) {
-    schedulesAdd(data: $data) {
+  mutation SchedulesAdd2($data: SchedulesAdd2!) {
+    schedulesAdd2(data: $data) {
         id
         day_of_week
         day
@@ -17,7 +17,8 @@ const schedulesAddGql = gql`
   }
 `;
 
-export const schedulesAdd: BaseApiFunction<Schedules> = (p) => {
+export const schedulesAdd2: BaseApiFunction<Schedules> = (p) => {
+    console.log("â", p)
   return client
     .mutate<{
       schedulesAdd: BaseResponseData<Schedules>;
@@ -26,9 +27,7 @@ export const schedulesAdd: BaseApiFunction<Schedules> = (p) => {
       variables: {
         data: {
           class_id: p.input?.class_id,
-          day_of_week: p.input?.day_of_week,
-          start_date: p.input?.start_date,
-          end_date: p.input?.end_date,
+          day: p.input?.day,
           start_time: p.input?.start_time,
           end_time: p.input?.end_time,
           schedules_type: p.input?.schedules_type,

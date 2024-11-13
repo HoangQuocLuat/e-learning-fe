@@ -32,7 +32,6 @@ const AttenPagination: React.FC = () => {
     setLoading(true)
     attendancePagination({ page, limit, search })
       .then(r => {
-        console.log("aa", r.data)
         if (r.success) {
           setLoading(false)
           setAttendanceData(r.data ?? [])
@@ -82,13 +81,20 @@ const AttenPagination: React.FC = () => {
       title: 'Thời gian vào',
       dataIndex: 'time_check_in',
       key: 'time_check_in',
-      render: (time: string) => formatDate(time, 'HH:mm:ss DD/MM/YYYY')
+      render: (time: string) => {
+        console.log(time); // In ra console giá trị của time2
+        return time ? formatDate(time, 'HH:mm:ss DD/MM/YYYY') : 'Chưa check out';
+      }
     },
     {
       title: 'Thời gian ra',
       dataIndex: 'time_check_out',
       key: 'time_check_out',
-      render: (time: string | null) => time ? formatDate(time, 'HH:mm:ss DD/MM/YYYY') : '0'
+      render: (time2: string) => {
+        console.log(time2); // In ra console giá trị của time2
+        return time2 ? formatDate(time2, 'HH:mm:ss DD/MM/YYYY') : 'Chưa check out';
+      }
+      
     }    
   ]  
 

@@ -1,5 +1,7 @@
 import dateTime from '.'
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 export const HH_MM_SS_DD_MM_YYYY = 'HH:mm:ss DD-MM-YYYY'
 
 export const YYYY_MM_DD_T_HH_MM_SS_Z = 'YYYY-MM-DD[T]HH:mm:ss[Z]'
@@ -17,17 +19,15 @@ export const formatDate = (date: any, format?: string) => {
 }
 
 
-export const formatScheduleTime = (start?: any, end?: string) => {
-  console.log("aaadfdf",start)
-  const startTime = dateTime(start)
-  const endTime = dateTime(end)
+export const formatScheduleTime = (start?: string, end?: string) => {
+  const startTime = dayjs.utc(start);  // Đảm bảo sử dụng thời gian UTC
+  const endTime = dayjs.utc(end);
 
-  const hStart = startTime.format(HH_mm)
-  console.log("ddd", hStart)
-  const hEnd = endTime.format(HH_mm)
+  const hStart = startTime.format("HH:mm:ss");  // Định dạng lại
+  const hEnd = endTime.format("HH:mm:ss");
 
-  return `${hStart} - ${hEnd}`
-}
+  return `${hStart} - ${hEnd}`;
+};
 
 // Thêm hàm để định dạng cho lịch
 export const formatScheduleForBackend = (startDate: string, startTime: string) => {

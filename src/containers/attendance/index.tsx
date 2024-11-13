@@ -119,7 +119,6 @@ const AttendanceContainer: React.FC = () => {
                     alert(result?.message?.Message);
                 } else if (result?.Status === 200) {
                     setAttendanceData([result?.Data]);
-                    console.log('Updated attendanceData:', [result?.Data]);
                 }
             } catch (error) {
                 console.error('Error sending image to backend:', error);
@@ -143,7 +142,6 @@ const AttendanceContainer: React.FC = () => {
             const imageDataUrl = canvas.toDataURL('image/jpeg');
             if (imageDataUrl === "") {
                 alert("Hãy thử lại")
-                console.error('Failed to capture frame');
                 return;
             }
             // Send the image data to the backend
@@ -156,7 +154,6 @@ const AttendanceContainer: React.FC = () => {
                     body: JSON.stringify({ image: imageDataUrl, class_id: selectedClassId }),
                 });
                 const result = await response.json();
-                console.log(result)
                 if (result?.message?.Status === 0) { // không tìm thấy mặt
                     alert(result?.message?.Message)
                 }else if (result?.message?.Status === 2) { // khuôn mặt ko có trong lớp 

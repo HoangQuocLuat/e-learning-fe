@@ -5,6 +5,7 @@ import { Buttons, Wrap, Header } from '../accountList/style';
 import { Calendar, Modal, Button, Tag, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import DrawersSchedules, { DrawerSchedulesMethods } from './drawerSchedules';
+import DrawersSchedules2,{ DrawerSchedulesMethods2 } from './drawerSchedules2';
 import { schedulesList } from '@graphql/query/admin/schedules-list';
 import { useMounted } from '@hooks/lifecycle';
 import { Schedules } from '@models/schedules';
@@ -13,6 +14,8 @@ import {formatScheduleTime} from '../../commons/datetime/format'
 
 const SchedulesContainer: React.FC = () => {
   const drawerRef = useRef<DrawerSchedulesMethods>(null);
+  const drawerRef2 = useRef<DrawerSchedulesMethods2>(null);
+  console.log("mm", drawerRef, drawerRef2)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedules | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,7 +37,6 @@ const SchedulesContainer: React.FC = () => {
         setLoading(false);
       });
   }
-  console.log("aaaa")
 
   useMounted(() => fetchSchedulesList());
   const getListData = (value: Dayjs) => {
@@ -106,6 +108,9 @@ const SchedulesContainer: React.FC = () => {
           <Buttons icon={<PlusOutlined />} onClick={() => drawerRef.current?.open()}>
             Thêm lịch
           </Buttons>
+          <Buttons icon={<PlusOutlined />} onClick={() => drawerRef2.current?.open()}>
+            Thêm lịch bổ sung
+          </Buttons>
         </BoxAction>
       </Header>
       <TableBox>      
@@ -142,6 +147,11 @@ const SchedulesContainer: React.FC = () => {
         ref={drawerRef}
         onSchedulesSucces={fetchSchedulesList} 
         onSchedulesUpdateSucces={fetchSchedulesList}
+      />
+
+      <DrawersSchedules2
+        ref={drawerRef2}
+        onSchedulesSucces2={fetchSchedulesList} 
       />
       </TableBox>
     </Wrap>

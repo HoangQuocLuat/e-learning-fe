@@ -47,7 +47,6 @@ const TuitionContainer: React.FC = () => {
     const handleCollapseChange = (activeKey: string | string[]) => {
             const month = activeKey.toString().padStart(2, '0');
             const year = selectedYear
-            console.log("aa", selectedYear)
             tuitionList({ month, year})
             .then((rTuition) => {
                 if (rTuition.success) {
@@ -90,7 +89,7 @@ const TuitionContainer: React.FC = () => {
         ),
     }));
 
-    const handleChangeMonth = (e) => {
+    const handleChangeMonth = (e: any) => {
         setSelectedYear(e.target.value)
         fetchTuition({
             month: currentMonth,
@@ -105,7 +104,7 @@ const TuitionContainer: React.FC = () => {
                 <select
                     id="yearSelect"
                     value={selectedYear}
-                    onChange={(e) => handleChangeMonth}
+                    onChange={handleChangeMonth}
                 >
                     <option value="2024">2024</option>
                     <option value="2023">2023</option>

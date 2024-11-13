@@ -12,6 +12,7 @@ const classAddGql = gql`
 `;
 
 export const classAdd: BaseApiFunction<Class> = (p) => {
+  console.log("sss", p)
   return client
     .mutate<{
       classAdd: BaseResponseData<Class>;

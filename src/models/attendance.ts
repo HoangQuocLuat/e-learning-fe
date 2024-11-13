@@ -12,6 +12,9 @@ export class Attendance extends Base {
   @field()
   time_check_in?: string
 
+  @field()
+  time_check_out?: string
+
 
   get name(): string {
     return this.user?.name || ''

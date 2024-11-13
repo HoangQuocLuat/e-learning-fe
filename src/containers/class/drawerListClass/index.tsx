@@ -4,6 +4,8 @@ import FormInputListClass from '../formClassList'
 import { notification } from 'antd'
 import { Class } from '@models/class'
 import { classAdd } from '@graphql/mutation/admin/class-add'
+import { classUpdate } from '@graphql/mutation/admin/class-update'
+
 
 export type DrawerListClassMethods = {
   open: (data?: Class) => void
@@ -45,7 +47,6 @@ const DrawersListClass = forwardRef<DrawerListClassMethods, DrawersListClassProp
             onClose()
           }
           if (!rClass.success) {
-            console.log(input)
             notification.error({ message: 'Thêm thông tin class không thành công' })
           }
           return Promise.resolve(rClass.success ?? false)
@@ -55,31 +56,28 @@ const DrawersListClass = forwardRef<DrawerListClassMethods, DrawersListClassProp
         })
     }
 
-    // const onUpdateAccount = (input: Account) => {
-    //   return accountUpdate({
-    //     input: {
-    //       id: input.id,
-    //       originalCode: input.originalCode,
-    //       internationalCode: input.internationalCode,
-    //       destination: input.destination,
-    //       status: input.status,
-    //     },
-    //   })
-    //     .then(rEntry => {
-    //       if (rEntry.success) {
-    //         notification.success({ message: 'Cập nhật thông tin đơn hàng thành công' })
-    //         onEntryUpdateSucces()
-    //         onClose()
-    //       }
-    //       if (!rEntry.success) {
-    //         notification.error({ message: 'Cập nhật thông tin đơn hàng không thành công' })
-    //       }
-    //       return Promise.resolve(rEntry.success ?? false)
-    //     })
-    //     .catch(() => {
-    //       return Promise.resolve(false)
-    //     })
-    // }
+    const onUpdateClass = (input: Class) => {
+      return classUpdate({
+        input: {
+          id: input.id,
+          class_name: input.class_name
+        },
+      })
+        .then(rClass => {
+          if (rClass.success) {
+            notification.success({ message: 'Cập nhật thông tin lớp học thành công' })
+            onClassUpdateSucces()
+            onClose()
+          }
+          if (!rClass.success) {
+            notification.error({ message: 'Cập nhật thông tin lớp học không thành công' })
+          }
+          return Promise.resolve(rClass.success ?? false)
+        })
+        .catch(() => {
+          return Promise.resolve(false)
+        })
+    }
 
     return (
       <DrawerStyle
@@ -92,6 +90,7 @@ const DrawersListClass = forwardRef<DrawerListClassMethods, DrawersListClassProp
           <FormInputListClass
             dataClass={dataClass}
             onAddClass={onAddClass}
+            onUpdateClass={onUpdateClass}
           />
         </Wrap>
       </DrawerStyle>

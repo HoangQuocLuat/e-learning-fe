@@ -5,7 +5,7 @@ import { Base } from './base'
 
 @model()
 export class Class extends Base {
- 
+
   @field()
   class_name?: string
 

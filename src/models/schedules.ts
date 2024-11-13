@@ -36,6 +36,7 @@ export class Schedules extends Base {
   @field()
   day_of_week?:number
 
+
   public toAddJson() {
     return {
       ...this.toJson(),

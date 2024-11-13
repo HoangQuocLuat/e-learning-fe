@@ -1,12 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { Button, Space, TableProps, Upload, UploadProps, message, notification, Table } from 'antd'
-import { EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { Button, Space, TableProps, notification } from 'antd'
+import { EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { Buttons, Header, TableBox, Wrap, TableData, BoxAction } from './style'
 import { classList } from '@graphql/query/admin/class-list'
-import { Pagination } from '@models/pagination'
 import { useMounted } from '@hooks/lifecycle'
-import ButtonDelete from '../accountList/button-delete'
-import { usePushShallowRoute } from '@hooks/router'
+import ButtonDelete from './button-delete'
 import DrawersListClass, { DrawerListClassMethods } from './drawerListClass'
 import { Class } from '@models/class'
 
@@ -18,10 +16,6 @@ const ListClass: React.FC = () => {
   const drawerRef = useRef<DrawerListClassMethods>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [classData, setClassData] = useState<Class[]>([])
-  const [page, setPage] = useState<Pagination>(Pagination.default)
-  const onPushShallow = usePushShallowRoute()
- 
-
   const fetchClassList = useCallback(() => {
     setLoading(true)
     classList()

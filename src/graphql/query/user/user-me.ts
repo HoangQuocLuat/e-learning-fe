@@ -56,7 +56,6 @@ export const getUserMe = () => {
             },
         })
         .then(r => {
-            console.log("aa",r?.data?.userMe)
             return {
                 success: true,
                 data: r?.data?.userMe,
