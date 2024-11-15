@@ -42,8 +42,10 @@ const FormInputListClass: React.ForwardRefRenderFunction<AddClassFormRef, AddCla
     const input = { ...oldData.current } as Class;
     if (dataClass) {
       input.id = dataClass.id;
+      input.price = dataClass.price;
     }
     input.class_name = form.getFieldValue('class_name');
+    input.price = form.getFieldValue('price');
     if (!dataClass) {
       onAddClass?.(input);
     }
@@ -71,6 +73,13 @@ const FormInputListClass: React.ForwardRefRenderFunction<AddClassFormRef, AddCla
         <Form.Item
           label="Tên lớp học"
           name="class_name"
+          rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
+        >
+          <Input placeholder="" />
+        </Form.Item>
+        <Form.Item
+          label="Giá lớp học"
+          name="price"
           rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
         >
           <Input placeholder="" />

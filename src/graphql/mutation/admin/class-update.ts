@@ -10,12 +10,12 @@ const classUpdateGql = gql`
     classUpdate(data: $data) {
         id
         class_name
+        price
       }
     }
 `
 
 export const classUpdate: BaseApiFunction<Class> = p => {
-    console.log("aaa", p)
   return client
     .mutate<{
       classUpdate: BaseResponseData<Class>
@@ -25,6 +25,7 @@ export const classUpdate: BaseApiFunction<Class> = p => {
         data: {
           id: p.input?.id,
           name: p.input?.class_name,
+          price: p.input?.price,
         },
       },
       context: {

@@ -38,18 +38,23 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
           items={[
             {
               key: '',
-              label: <Link to={router_keys.home}>Home</Link>,
+              label: <Link to={router_keys.home}>Trang chủ</Link>,
               icon: <AppstoreOutlined />,
             },
             {
               key: '/schedules',
               icon: <FileDoneOutlined />,
-              label: <Link to={router_keys.schedules}>Schedule</Link>,
+              label: <Link to={router_keys.schedules}>Lịch học</Link>,
             },
             {
               key: '/tuition',
               icon: <FileDoneOutlined />,
-              label: <Link to={router_keys.tuition}>Tuition</Link>,
+              label: <Link to={router_keys.tuition}>Học phí</Link>,
+            },
+            {
+              key: '/payment',
+              icon: <FileDoneOutlined />,
+              label: <Link to={router_keys.tuition}>Hóa đơn học phí</Link>,
             },
           ]}
         />

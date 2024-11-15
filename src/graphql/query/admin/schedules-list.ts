@@ -36,7 +36,6 @@ export const schedulesList = () => {
             },
         })
         .then(r => {
-            console.log(r.data?.schedulesList)
             return {
                 success: true,
                 data: r.data?.schedulesList,

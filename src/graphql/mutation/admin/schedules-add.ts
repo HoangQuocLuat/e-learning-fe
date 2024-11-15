@@ -37,7 +37,6 @@ export const schedulesAdd: BaseApiFunction<Schedules> = (p) => {
       },
     })
     .then(r => {
-      console.log(r.data?.schedulesAdd)
       return {
         success: true,
         data: Schedules.fromJson(r.data?.schedulesAdd),

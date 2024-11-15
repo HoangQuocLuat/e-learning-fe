@@ -46,14 +46,14 @@ const DrawersSchedules = forwardRef<DrawerSchedulesMethods, DrawersSchedulesProp
           class_id: input.class_id,
         },
       })
-        .then(rSchedules => {
+      .then(rSchedules => {
+          console.log(rSchedules)
           if (rSchedules.success) {
             notification.success({ message: 'Thêm thông tin lịch thành công' })
             onSchedulesSucces()
             onClose()
           }
           if (!rSchedules.success) {
-            console.log(input)
             notification.error({ message: 'Thêm thông tin lịch không thành công' })
           }
           return Promise.resolve(rSchedules.success ?? false)

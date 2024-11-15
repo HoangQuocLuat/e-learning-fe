@@ -10,6 +10,7 @@ const classListGql = gql`
     classList {
         id
         class_name
+        price
     }
   }
 `

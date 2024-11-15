@@ -88,6 +88,19 @@ export const routers: DataRouteObject[] = [
               title: 'Thông tin cá nhân',
             },
           },
+          {
+            id: generateRandomId(),
+            path: 'payment',
+            lazy: async () => {
+              const { default: PaymentPage } = await import('@app/user/payment')
+              return {
+                Component: PaymentPage,
+              }
+            },
+            meta: {
+              title: 'Hóa đơn học phí',
+            },
+          },
         ]
       },
       {

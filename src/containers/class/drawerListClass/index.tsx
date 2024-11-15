@@ -38,6 +38,7 @@ const DrawersListClass = forwardRef<DrawerListClassMethods, DrawersListClassProp
       return classAdd({
         input: {
             class_name: input.class_name,
+            price: input.price
         },
       })
         .then(rClass => {
@@ -60,7 +61,8 @@ const DrawersListClass = forwardRef<DrawerListClassMethods, DrawersListClassProp
       return classUpdate({
         input: {
           id: input.id,
-          class_name: input.class_name
+          class_name: input.class_name,
+          price: input.price
         },
       })
         .then(rClass => {

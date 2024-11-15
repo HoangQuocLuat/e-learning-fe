@@ -1,12 +1,14 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { TableProps, notification, Tag } from 'antd'
+import { TableProps, notification, Button, Space, } from 'antd'
+import { WalletOutlined } from '@ant-design/icons'
 import { TableBox, TableData, } from '../../../accountList/style'
-import { Payment } from '@models/payment'
-import { paymentPaginationByID } from '@graphql/query/user/payment-pagination'
+import { Tuition } from '@models/tuition'
+import { tuitionPaginationByUserID } from '@graphql/query/user/tuition-pagination-by-user-id'
 import { Pagination } from '@models/pagination'
 import { useMounted } from '@hooks/lifecycle'
 import { usePushShallowRoute } from '@hooks/router'
 import { useParams } from 'react-router-dom'
+import axios from 'axios';
 
 type FetchParams = {
   page?: number
@@ -19,9 +21,10 @@ export type InputSearch = {
   phone: string
 }
 
-const tuitionPagination: React.FC = () => {
+const TuitionPaginationByID: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [paymentData, setPaymentData] = useState<Payment[]>([])
+  const [tuitionData, setTuitionData] = useState<Tuition[]>([])
+  const [transID, setTransID] = useState("")
   const [page, setPage] = useState<Pagination>(Pagination.default)
   const onPushShallow = usePushShallowRoute()
   //@ts-ignore
@@ -30,12 +33,12 @@ const tuitionPagination: React.FC = () => {
 
   const fetch = useCallback(({ page, limit, search }: FetchParams) => {
     setLoading(true)
-    paymentPaginationByID({ page, limit, search })
-      .then(rPayment => {
-        if (rPayment.success) {
+    tuitionPaginationByUserID({ page, limit, search })
+      .then(r => {
+        if (r.success) {
           setLoading(false)
-          setPaymentData(rPayment.data ?? [])
-          setPage(rPayment.paging!)
+          setTuitionData(r.data ?? [])
+          setPage(r.paging!)
         }
       })
       .catch(() => {
@@ -43,59 +46,74 @@ const tuitionPagination: React.FC = () => {
         notification.error({ message: 'Có lỗi xảy ra!' })
       })
   }, [])
-  // const onSearch = (input: InputSearch) => {
-  //   const name = input?.name
-  //   const phone = input?.phone
-  //   if (name) {
-  //     onPushShallow({ name })
-  //     fetch({
-  //       page: 1,
-  //       limit: page.limit ?? 10,
-  //       search: { name},
-  //     })
-  //   } else if (phone) {
-  //     onPushShallow({ phone })
-  //     fetch({
-  //       page: 1,
-  //       limit: page.limit ?? 10,
-  //       search: { phone },
-  //     })
-  //   } else {
-  //     onPushShallow({ page: 1, limit: page.limit })
-  //     fetch({
-  //       page: 1,
-  //       limit: page.limit ?? 10,
-  //     })
-  //   }
-  // }
 
   useMounted(() => fetch({ page: 1, limit: page?.limit }))
 
-  const columns: TableProps<Payment>['columns'] = [
+  const handlePayment = async (app_user: string, tuition_id: string | undefined) => {
+    try {
+        const response = await axios.post('http://127.0.0.1:8989/api/v1/payment/order', {
+            app_user: app_user,
+            tuition_id: tuition_id
+        });
+        if (response.data.Message === 'Hoc phi da thanh toan') {
+            alert(response.data.Message);
+        }else if(response.data.Data?.result?.return_code === 1) {
+            setTransID(response.data.Data?.result?.trans_id)
+            window.open(response.data.Data?.result?.order_url, '_blank'); 
+        } else {
+            throw new Error('Không có URL chuyển hướng');
+        }
+    } catch (error) {
+        console.error('Lỗi thanh toán:', error);
+        alert('Thanh toán thất bại. Vui lòng thử lại.');
+    }
+};
+  const columns: TableProps<Tuition>['columns'] = [
     {
-      title: 'Mã giao dịch',
-      dataIndex: 'transID',
-      key: 'transID',
+      title: 'Học kỳ',
+      dataIndex: 'month',
+      key: 'month',
+    },
+    {
+      title: 'Tổng tiền',
+      dataIndex: 'total_fee',
+      key: 'total_fee',
+    },
+    {
+      title: 'Số tiền cần thanh toán',
+      dataIndex: 'discount',
+      key: 'discount',
     },
     {
       title: 'Số tiền đã thanh toán',
-      dataIndex: 'amount',
-      key: 'amount',
+      dataIndex: 'paid_amount',
+      key: 'paid_amount',
     },
     {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (dataIndex) => (
-        <Tag color={dataIndex === 'Thanh toán thành công' ? 'green' : dataIndex === 'Đang thanh toán' ? 'blue' : 'red'}>
-            {dataIndex}
-        </Tag>
+      title: 'Số tiền còn lại',
+      dataIndex: 'remaining_fee',
+      key: 'remaining_fee'
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button
+            icon={<WalletOutlined />}
+            onClick={() =>{
+                if (record.user?.id) {
+                    handlePayment(record.user?.id, record.id)
+                }
+                else {
+                    alert('Không tìm thấy học sinh này.')
+                    }
+                }
+            }
+            style={{ border: 'none' }}
+          />
+        </Space>
       ),
-    },
-    {
-        title: 'Ngày thực hiện giao dịch',
-        dataIndex: 'date',
-        key: 'date',   
     },
   ]  
 
@@ -107,9 +125,9 @@ const tuitionPagination: React.FC = () => {
             columns={columns}
             loading={loading}
             rowKey={record => record?.id ?? ''}
-            dataSource={paymentData}
+            dataSource={tuitionData}
             scroll={{ x: 600 }}
-            title={() => 'Hóa đơn thanh toán tiền học trực tuyến'}
+            title={() => 'Tiền học qua các tháng'}
             pagination={{
               pageSize: page.limit ?? 12,
               current: page.current > 0 ? page.current : 1,
@@ -132,4 +150,4 @@ const tuitionPagination: React.FC = () => {
   )
 }
 
-export default tuitionPagination
+export default TuitionPaginationByID

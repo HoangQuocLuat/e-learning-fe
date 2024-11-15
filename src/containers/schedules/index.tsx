@@ -15,7 +15,6 @@ import {formatScheduleTime} from '../../commons/datetime/format'
 const SchedulesContainer: React.FC = () => {
   const drawerRef = useRef<DrawerSchedulesMethods>(null);
   const drawerRef2 = useRef<DrawerSchedulesMethods2>(null);
-  console.log("mm", drawerRef, drawerRef2)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedules | null>(null);
   const [loading, setLoading] = useState(false);
@@ -26,7 +25,6 @@ const SchedulesContainer: React.FC = () => {
       .then((response) => {
         if (response.success) {
           setDataSchedulesList(response.data ?? []);
-          console.log(dataSchedulesList)
         } else {
           throw new Error('Failed to fetch schedules');
         }

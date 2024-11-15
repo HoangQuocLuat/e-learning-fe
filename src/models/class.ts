@@ -9,6 +9,9 @@ export class Class extends Base {
   @field()
   class_name?: string
 
+  @field()
+  price?: number
+
   public toAddJson() {
     return {
       ...this.toJson(),

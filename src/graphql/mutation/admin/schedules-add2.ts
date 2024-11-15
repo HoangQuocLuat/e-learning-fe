@@ -18,7 +18,6 @@ const schedulesAddGql = gql`
 `;
 
 export const schedulesAdd2: BaseApiFunction<Schedules> = (p) => {
-    console.log("â", p)
   return client
     .mutate<{
       schedulesAdd: BaseResponseData<Schedules>;
@@ -36,7 +35,6 @@ export const schedulesAdd2: BaseApiFunction<Schedules> = (p) => {
       },
     })
     .then(r => {
-      console.log(r.data?.schedulesAdd)
       return {
         success: true,
         data: Schedules.fromJson(r.data?.schedulesAdd),

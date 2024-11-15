@@ -21,6 +21,8 @@ export class Tuition extends Base {
   @field()
   paid_amount?: number
 
+  @field()
+  month?: string
 
   public toAddJson() {
     return {

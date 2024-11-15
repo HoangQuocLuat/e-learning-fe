@@ -2,18 +2,17 @@ import { Wrap, TableData, TableBox } from '../../accountList/style';
 import { Button, Space, TableProps} from 'antd'
 import { Tuition } from '@models/tuition'
 import { WalletOutlined } from '@ant-design/icons'
-import { useState, useEffect} from 'react';
+import { useState} from 'react';
 import axios from 'axios';
 import { getTuition } from '@graphql/query/user/tuition';
 import { useMounted } from '@hooks/lifecycle';
-import TuitionPagination from './tuition-pagination'
+import TuitionPaginationByID from './tuition-pagination'
 
 const TuitionContainer: React.FC = () => {
-    const [loading, setLoading] = useState(false);
-    const [tuitionData, setTuitionData] = useState<Tuition[]>([])
-    const currentMonth = (new Date().getMonth() + 1).toString();
-    const [transID, setTransID] = useState("")
-    const [tuitionID, setTuitionID] = useState("")
+  const [loading, setLoading] = useState(false);
+  const [tuitionData, setTuitionData] = useState<Tuition[]>([])
+  const currentMonth = (new Date().getMonth()).toString();
+  const [transID, setTransID] = useState("")
     const fetchGpl = () => {
         setLoading(true);
         getTuition()
@@ -39,7 +38,6 @@ const handlePayment = async (app_user: string) => {
         const response = await axios.post('http://127.0.0.1:8989/api/v1/payment/order', {
             app_user: app_user,
         });
-        console.log(response.data)
         if (response.data.Message === 'Hoc phi da thanh toan') {
             alert(response.data.Message);
         }else if(response.data.Data?.result?.return_code === 1) {
@@ -78,11 +76,12 @@ const handlePayment = async (app_user: string) => {
         {
           title: 'Hành động',
           key: 'action',
-          render: (_, record) => (
+          render: (_, record) =>
             <Space size="middle">
               <Button
                 icon={<WalletOutlined />}
                 onClick={() =>{
+                  console.log("aaa", record)
                     if (record.user?.id) {
                         handlePayment(record.user?.id)
                     }
@@ -94,16 +93,10 @@ const handlePayment = async (app_user: string) => {
                 style={{ border: 'none' }}
               />
             </Space>
-          ),
         },
       ]
     return (
         <Wrap>
-            {/* 2 phần chính 
-            1. bảng thanh toán học phí
-            2. bảng tổng hợp học phi */}
-
-            {/* 1. bảng thanh toán học phí */}
             <TableBox>
                 {
                     //@ts-ignore
@@ -115,11 +108,11 @@ const handlePayment = async (app_user: string) => {
                         dataSource={tuitionData}
                         scroll={{ x: 600 }}
                         pagination= {false}
-                        title={() => `Thanh toán học phí tháng ${currentMonth}`}
+                        title={() => `Thanh toán học phí tháng ${currentMonth }`}
                     />
                 }
             </TableBox>
-            <TuitionPagination></TuitionPagination>
+            <TuitionPaginationByID></TuitionPaginationByID>
         </Wrap>
     )
 }

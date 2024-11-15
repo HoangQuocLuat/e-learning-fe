@@ -3,6 +3,7 @@ export const router_keys = {
     home: '/',
     tuitionUser: '/tuition',
     schedulesUser: '/schedules',
+    paymentUser: '/payment',
     dashboard: '/dashboard',
     accountList: '/dashboard/accountList',
     schedules: '/dashboard/schedules',

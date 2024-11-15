@@ -7,12 +7,12 @@ const classAddGql = gql`
   mutation ClassAdd($data: ClassAdd!) {
     classAdd(data: $data) {
       class_name
+      price
     }
   }
 `;
 
 export const classAdd: BaseApiFunction<Class> = (p) => {
-  console.log("sss", p)
   return client
     .mutate<{
       classAdd: BaseResponseData<Class>;
@@ -21,6 +21,7 @@ export const classAdd: BaseApiFunction<Class> = (p) => {
       variables: {
         data: {
           class_name: p.input?.class_name,
+          price: p.input?.price,
         },
       },
     })

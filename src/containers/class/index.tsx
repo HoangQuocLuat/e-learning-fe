@@ -40,6 +40,11 @@ const ListClass: React.FC = () => {
       key: 'class_name',
     },
     {
+      title: 'Giá',
+      dataIndex: 'price',
+      key: 'price',
+    },
+    {
       title: 'Hành động',
       key: 'action',
       render: (_, record) => (
@@ -51,6 +56,7 @@ const ListClass: React.FC = () => {
           />
           <ButtonDelete
             record={record}
+            fetchClass={fetchClassList}
           />
         </Space>
       ),
