@@ -132,8 +132,16 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
           label="Chức vụ"
           name="role"
           rules={[{ required: true, message: 'Vui lòng nhập chức vụ!' }]}
+          initialValue="user"
         >
-          <Input placeholder="Vui lòng nhập chức vụ" />
+          <Select placeholder="Chọn chức vụ" style={{ width: 200 }}>
+              <Select.Option key={"user"} value={"user"}>
+                user
+              </Select.Option>
+              <Select.Option key={"admin"} value={"admin"}>
+                admin
+              </Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item
           label="Họ tên đầy đủ"

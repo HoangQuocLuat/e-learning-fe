@@ -82,7 +82,6 @@ const AttenPagination: React.FC = () => {
       dataIndex: 'time_check_in',
       key: 'time_check_in',
       render: (time: string) => {
-        console.log(time); // In ra console giá trị của time2
         return time ? formatDate(time, 'HH:mm:ss DD/MM/YYYY') : 'Chưa check out';
       }
     },
@@ -91,7 +90,6 @@ const AttenPagination: React.FC = () => {
       dataIndex: 'time_check_out',
       key: 'time_check_out',
       render: (time2: string) => {
-        console.log(time2); // In ra console giá trị của time2
         return time2 ? formatDate(time2, 'HH:mm:ss DD/MM/YYYY') : 'Chưa check out';
       }
       

@@ -108,6 +108,18 @@ const ListAccount: React.FC = () => {
 
   const columns: TableProps<Account>['columns'] = [
     {
+      title: 'Hình đại diện',
+      dataIndex: 'avatar',
+      key: 'avatar',
+      render: (avatar: string) => (
+        <img
+          src={avatar}
+          alt="Avatar"
+          style={{ width: 50, height: 50, borderRadius: '50%', objectFit: 'cover' }}
+        />
+      ),
+    },
+    {
       title: 'Tên học sinh',
       dataIndex: 'name',
       key: 'name',
@@ -126,6 +138,11 @@ const ListAccount: React.FC = () => {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
+    },
+    {
+      title: 'Lớp học',
+      dataIndex: 'class_name',
+      key: 'class_name',
     },
     {
       title: 'Hành động',
@@ -172,12 +189,14 @@ const ListAccount: React.FC = () => {
     },
   ]
   const expandedRowRender = (record: Account) => {
+    console.log("r", record)
     return (
       <Table
         columns={[
           { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone' },
           { title: 'Email', dataIndex: 'email', key: 'email' },
           { title: 'Địa chỉ', dataIndex: 'address', key: 'address' },
+          { title: 'Được hỗ trợ', dataIndex: 'user_type', key: 'user_type' },
         ]}
         dataSource={[
           {
@@ -185,6 +204,7 @@ const ListAccount: React.FC = () => {
             phone: record.phone,
             email: record.email,
             address: record.address,
+            user_type: record.user_type,
           },
         ]}
         pagination={false}

@@ -24,12 +24,27 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
   return (
     <MenuStyled>
       <div>
-        <Header>
-        <span>
-          L and T
-        </span>
-        {/* <img src={Logo} alt="" /> */}
-        </Header>
+      <Header
+  style={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '12rem', 
+    backgroundColor: '#f5f5f5',
+  }}
+> 
+  <Avatar
+    shape="circle"
+    src="img/Logo.png"
+    style={{
+      width: '100%',
+      maxWidth: '10rem',
+      height: '10rem',
+      borderRadius: '50%',
+    }}
+  />
+</Header>
+
         <MenuAntdStyle
           theme="dark"
           mode="inline"
@@ -38,8 +53,8 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
           items={[
             {
               key: '',
-              label: <Link to={router_keys.home}>Trang chủ</Link>,
               icon: <AppstoreOutlined />,
+              label: <Link to={router_keys.home}>Trang chủ</Link>,
             },
             {
               key: '/schedules',

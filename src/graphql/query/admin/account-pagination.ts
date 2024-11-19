@@ -25,6 +25,8 @@ const accountPaginationGql = gql`
         phone
         email
         address
+        user_type
+        avatar
       }
     }
   }
@@ -45,6 +47,7 @@ export const accountPagination: BaseApiFunction<Account[]> = p => {
             },
         })
         .then(r => {
+          console.log(r)
             return {
                 success: true,
                 data: (r.data.userPagination.rows ?? []).map(Account.fromJson),

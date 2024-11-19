@@ -56,4 +56,4 @@ export const getTuition = () => {
         .catch((e: ApolloError) => {
             return handleGraphqlError(e);
         });
-};
+    };

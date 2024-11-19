@@ -44,7 +44,6 @@ export const attendancePagination: BaseApiFunction<Attendance[]> = p => {
             },
         })
         .then(r => {
-            console.log(r.data.attendancePagination.rows)
             return {
                 success: true,
                 data: (r.data.attendancePagination.rows ?? []).map(Attendance.fromJson),

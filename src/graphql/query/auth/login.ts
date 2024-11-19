@@ -12,7 +12,6 @@ const logInGql = gql`
 `
 
 export const logIn: BaseApiFunction<string, { userName: string; password: string }> = p => {
-  console.log('Input:', p.input);
   return client
     .query<{
       authAdminLogin: BaseResponseData<{ access_token: string; refresh_token: string }>
