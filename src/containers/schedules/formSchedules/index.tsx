@@ -129,7 +129,7 @@ const FormInputSchedules: React.ForwardRefRenderFunction<AddScheduleFormRef, Add
           <Select placeholder="Chọn lớp học" style={{ width: 200 }}>
             {classData?.map(cls => (
               <Select.Option key={cls.id} value={cls.id}>
-                {cls.class_name} {/* Hiển thị tên lớp học */}
+                {cls.class_name}
               </Select.Option>
             ))}
           </Select>

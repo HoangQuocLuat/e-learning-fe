@@ -2,13 +2,13 @@ import { ApolloError, gql } from '@apollo/client'
 import { AUTHEN_TOKEN_KEY } from '@constants/key'
 import client from '@graphql/client/admin_client'
 import { handleGraphqlError } from '@graphql/handle'
-import { Account } from '@models/account'
+import { Instruct } from '@models/instruct'
 import { Pagination } from '@models/pagination'
 import Cookies from 'js-cookie'
 
-const accountPaginationGql = gql`
-  query UserPagination($page: Int!, $limit: Int!, $orderBy: String, $search: Map) {
-    userPagination(page: $page, limit: $limit, order_by: $orderBy, search: $search) {
+const instructPaginationGql = gql`
+  query InstructPagination($page: Int!, $limit: Int!, $orderBy: String, $search: Map) {
+    instructPagination(page: $page, limit: $limit, order_by: $orderBy, search: $search) {
       paging {
         current_page
         limit
@@ -17,31 +17,22 @@ const accountPaginationGql = gql`
       }
       rows {
         id
-        user_name
-        role
-        status
-        name
-        date_birth
-        phone
-        email
-        address
-        user_type
-        avatar
-        class {
-          id
-          class_name
-        }
+        title
+        description
+        images
+        doc_url
+        date
       }
     }
   }
 `
 
-export const accountPagination: BaseApiFunction<Account[]> = p => {
+export const instructPagination: BaseApiFunction<Instruct[]> = p => {
     return client
         .query<{
-            userPagination: BaseResponseData<Account[]>
+            instructPagination: BaseResponseData<Instruct[]>
         }>({
-            query: accountPaginationGql,
+            query: instructPaginationGql,
             fetchPolicy: 'no-cache',
             variables: { page: p?.page, limit: p?.limit, search: p?.search },
             context: {
@@ -51,11 +42,10 @@ export const accountPagination: BaseApiFunction<Account[]> = p => {
             },
         })
         .then(r => {
-          console.log("aa",r)
             return {
                 success: true,
-                data: (r.data.userPagination.rows ?? []).map(Account.fromJson),
-                paging: Pagination.fromJson(r.data.userPagination.paging),
+                data: (r.data.instructPagination.rows ?? []).map(Instruct.fromJson),
+                paging: Pagination.fromJson(r.data.instructPagination.paging),
             }
         })
         .catch((e: ApolloError) => {

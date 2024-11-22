@@ -2,29 +2,29 @@ import { useImperativeHandle, forwardRef, useState } from 'react'
 import { DrawerStyle, Title, Wrap } from './style'
 import FormInputListAccount from '../formAccountList'
 import { notification } from 'antd'
-import { Account } from '@models/account'
+import { Event } from '@models/event'
 import { accountAdd } from '@graphql/mutation/admin/account-add'
 import { accountUpdate } from '@graphql/mutation/admin/account-update'
 
-export type DrawerListAccountMethods = {
-  open: (data?: Account) => void
+export type DrawerEventMethods = {
+  open: (data?: Event) => void
   close: () => void
 }
 
-type DrawersListAccountProps = {
-  onAccountSucces: () => void
-  onAccountUpdateSucces: () => void
+type DrawersEventProps = {
+  onEventSucces: () => void
+  onEventUpdateSucces: () => void
 }
 
-const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccountProps>(
-  ({ onAccountSucces, onAccountUpdateSucces }, ref) => {
+const DrawersListAccount = forwardRef<DrawerEventMethods, DrawersEventProps>(
+  ({ onEventSucces, onEventUpdateSucces }, ref) => {
     const [visible, setVisible] = useState(false)
-    const [dataAccount, setDataAccount] = useState<Account>()
+    const [dataEvent, setDataEvent] = useState<Event>()
 
     useImperativeHandle(ref, () => ({
-      open: (data?: Account) => {
+      open: (data?: Event) => {
         setVisible(true)
-        setDataAccount(data)
+        setDataEvent(data)
       },
       close: () => onClose(),
     }))
@@ -33,38 +33,33 @@ const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccou
       setVisible(false)
     }
 
-    const onAddAccount = (input: Account) => {
-      return accountAdd({
+    const onAddEvent = (input: Event) => {
+      return EventAdd({
         input: {
-          class_id: input.class_id,
-          user_name: input.user_name,
-          password: input.password,
-          role: input.role,
-          name: input.name,
-          date_birth: input.date_birth,
-          phone: input.phone,
-          email: input.email,
-          address: input.address,
+          title: input.title,
+          description: input.description,
+          images: input.images,
+          docurl: input.docurl,
         },
       })
-        .then(rAccount => {
-          if (rAccount.success) {
-            notification.success({ message: 'Thêm thông tin tài khoản thành công' })
-            onAccountSucces()
+        .then(r => {
+          if (r.success) {
+            notification.success({ message: 'Thêm thông tin sự kiện thành công' })
+            onAddEventSucces()
             onClose()
           }
-          if (!rAccount.success) {
+          if (!r.success) {
             console.log(input)
-            notification.error({ message: 'Thêm thông tin tài khoản không thành công' })
+            notification.error({ message: 'Thêm thông tin sự kiện không thành công' })
           }
-          return Promise.resolve(rAccount.success ?? false)
+          return Promise.resolve(r.success ?? false)
         })
         .catch(() => {
           return Promise.resolve(false)
         })
     }
 
-    const onUpdateAccount = (input: Account) => {
+    const onUpdateAccount = (input: Event) => {
       return accountUpdate({
         input: {
           id: input.id,
@@ -81,12 +76,12 @@ const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccou
       })
         .then(rEntry => {
           if (rEntry.success) {
-            notification.success({ message: 'Cập nhật thông tin học sinh thành công' })
-            onAccountUpdateSucces()
+            notification.success({ message: 'Cập nhật thông tin đơn hàng thành công' })
+            onEntryUpdateSucces()
             onClose()
           }
           if (!rEntry.success) {
-            notification.error({ message: 'Cập nhật thông tin học sinh không thành công' })
+            notification.error({ message: 'Cập nhật thông tin đơn hàng không thành công' })
           }
           return Promise.resolve(rEntry.success ?? false)
         })
@@ -106,7 +101,6 @@ const DrawersListAccount = forwardRef<DrawerListAccountMethods, DrawersListAccou
           <FormInputListAccount
             dataAccount={dataAccount}
             onAddAccount={onAddAccount}
-            onUpdateAccount={onUpdateAccount}
           />
         </Wrap>
       </DrawerStyle>

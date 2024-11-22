@@ -9,7 +9,7 @@ import { useMounted } from '@hooks/lifecycle'
 export type FormInputProps = {
   dataAccount?: Account
   onAddAccount?: (input: Account) => Promise<boolean>
-  // onUpdateEntry?: (input: Account) => Promise<boolean>
+  onUpdateAccount?: (input: Account) => Promise<boolean>
 }
 
 export type FormInputRef = {
@@ -19,9 +19,8 @@ export type FormInputRef = {
 const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInputProps> = (
   {
     dataAccount,
-    // dataStatus,
     onAddAccount = () => Promise.resolve(false),
-    // onUpdateEntry = () => Promise.resolve(false),
+    onUpdateAccount = () => Promise.resolve(false),
   },
   ref,
 ) => {
@@ -35,15 +34,19 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
   }))
   useEffect(() => {
     if (dataAccount) {
+      console.log("aa",dataAccount)
       form.setFieldsValue({
-        userName: dataAccount.user_name,
+        class_id: dataAccount.class?.id,
+        user_name: dataAccount.user_name,
         password: dataAccount.password,
         role: dataAccount.role,
         name: dataAccount.name,
-        dateBirth: dataAccount.date_birth,
+        date_birth: dataAccount.date_birth,
         phone: dataAccount.phone,
         address: dataAccount.address,
-        status: dataAccount.status
+        status: dataAccount.status,
+        user_type: dataAccount.user_type,
+        email: dataAccount.email,
       })
     }
     if (!dataAccount) {
@@ -85,9 +88,9 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
     if (!dataAccount) {
       onAddAccount(input)
     }
-    // if (dataAccount) {
-    //   onUpdateEntry(input)
-    // }
+    if (dataAccount) {
+      onUpdateAccount(input)
+    }
   }
   return (
     <Form
@@ -121,13 +124,20 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
         >
           <Input placeholder="Vui lòng nhập tên tài khoản" />
         </Form.Item>
-        <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
-        >
-          <Input placeholder="Vui lòng nhập mật khẩu" />
-        </Form.Item>
+        {
+          !dataAccount &&<Form.Item
+  label="Mật khẩu"
+  name="password"
+  rules={
+    !dataAccount
+      ? [{ required: true, message: 'Vui lòng nhập mật khẩu!' }]
+      : []
+  }
+>
+  <Input.Password placeholder="Vui lòng nhập mật khẩu" />
+</Form.Item>
+}
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Form.Item
           label="Chức vụ"
           name="role"
@@ -143,6 +153,24 @@ const FormInputListAccount: React.ForwardRefRenderFunction<FormInputRef, FormInp
               </Select.Option>
           </Select>
         </Form.Item>
+        <Form.Item
+          label="Dạng hỗ trợ"
+          name="user_type"
+          initialValue="user"
+        >
+          <Select placeholder="Chọn chức vụ" style={{ width: 200 }}>
+              <Select.Option key={1} value={1}>
+                Loại 1
+              </Select.Option>
+              <Select.Option key={2} value={2}>
+                Loại 2
+              </Select.Option>
+              <Select.Option key="none" value={null}>
+                Không hỗ trợ
+              </Select.Option>
+          </Select>
+        </Form.Item>
+        </div>
         <Form.Item
           label="Họ tên đầy đủ"
           name="name"

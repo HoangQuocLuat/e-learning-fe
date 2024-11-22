@@ -7,6 +7,7 @@ import {Class} from './class'
 export class Account extends Base {
   @field()
   class?: Class
+
   @field()
   class_id?: string
 
@@ -41,7 +42,12 @@ export class Account extends Base {
   avatar?: string
 
   @field()
-  user_type?: number
+  user_type?: string
+
+  get class_name(): string {
+    return this.class?.class_name || ''
+  }
+
 
   public toAddJson() {
     return {

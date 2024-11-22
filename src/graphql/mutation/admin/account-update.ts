@@ -4,8 +4,8 @@ import { handleGraphqlError } from '@graphql/handle'
 import { Account } from '@models/account'
 
 const accountUpdateGql = gql`
-  mutation UserAdd($data: UserAdd!) {
-    userAdd(data: $data) {
+  mutation UserUpdate($data: ProfileUpdate!) {
+    userUpdate(data: $data) {
       id
       user_name
       role
@@ -22,26 +22,26 @@ const accountUpdateGql = gql`
 export const accountUpdate: BaseApiFunction<Account> = (p) => {
   return client
     .mutate<{
-      accountAdd: BaseResponseData<Account>;
+      accountUpdate: BaseResponseData<Account>;
     }>({
       mutation: accountUpdateGql,
       variables: {
         data: {
-          user_name: p.input?.user_name,
-          password: p.input?.password,
+          id: p.input?.id,
           role: p.input?.role,
           name: p.input?.name,
           date_birth: p.input?.date_birth,
           phone: p.input?.phone,
           email: p.input?.email,
           address: p.input?.address,
+          class_id: p.input?.class_id,
         },
       },
     })
     .then(r => {
       return {
         success: true,
-        data: Account.fromJson(r.data?.accountAdd),
+        data: Account.fromJson(r.data?.accountUpdate),
       };
     })
     .catch((e: ApolloError) => {

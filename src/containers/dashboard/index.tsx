@@ -6,7 +6,6 @@ const DashBoardContainer: React.FC = () => {
     return (
         <Wrap>
             <Header>
-                <h2>Dash board</h2>
             </Header>
             <TableBox>
                 <BarChart></BarChart>

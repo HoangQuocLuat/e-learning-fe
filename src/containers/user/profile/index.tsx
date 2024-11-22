@@ -3,133 +3,114 @@ import { Wrap } from '../../accountList/style';
 import { Account } from '@models/account'
 import { Header } from './style';
 import { UserOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
-import { Avatar, Button, Space, Modal, Upload,notification} from 'antd';
+import { Avatar, Button, Space, Modal, Upload, UploadProps, notification} from 'antd';
 import { getUserMe } from '@graphql/query/user/user-me';
 import { useMounted } from '@hooks/lifecycle';
+import React from 'react';
 import axios from 'axios';
 
 const ProfileContainer: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState<Account | null>(null)
+  const [userData, setUserData] = useState<Account | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [file, setFile] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null); // Lưu file
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // Lưu URL preview
+
   const fetchGpl = () => {
     setLoading(true);
     getUserMe()
       .then((response) => {
-        console.log(response)
         if (response.success) {
           setUserData(response.data);
         } else {
-          throw new Error('Failed to fetch schedules');
+          throw new Error('Failed to fetch user data');
         }
       })
-      .catch(() => {
-      })
+      .catch(() => {})
       .finally(() => {
         setLoading(false);
       });
-}
-useMounted(() => fetchGpl())
+  };
 
-const handleModelOpen = () => {
-  setIsModalVisible(true);
-}
+  useMounted(() => fetchGpl());
 
-const handleModalCancel = () => {
-  setIsModalVisible(false);
-  setFile(null);
-};
+  const handleModelOpen = () => {
+    setIsModalVisible(true);
+  };
 
-const handleUploadChange = ({ file }: any) => {
-  console.log("file", file.error);
-  if (file.status === 'done') {
-    notification.success({ message: `${file.name} uploaded successfully` });
-  } else if (file.status === 'error') {
-    notification.error({ message: `${file.name} upload failed.` });
-  }
-  setFile(file);
-};
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setFile(null);
+    setPreviewUrl(null);
+  };
 
-const handleUploadAvatar = async () => {
-  if (!file || !userData) {
-    notification.error({ message: 'No file selected or user data missing' });
-    return;
-  }
+  const uploadProps: UploadProps = {
+    name: 'image',
+    listType: "picture-circle",
+    accept: '.jpg,.jpeg,.png',
+    showUploadList: false,
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith('image/');
+      if (!isImage) {
+        notification.error({ message: 'Chỉ chấp nhận file ảnh' });
+      } else {
+        // Tạo URL tạm thời để xem trước
+        setPreviewUrl(URL.createObjectURL(file));
+        setFile(file); // Lưu file để dùng sau
+      }
+      return false; // Ngăn việc upload tự động
+    },
+  };
 
-  console.log("file", file)
-
-  setLoading(true);
-//   let imageFile = file;
-
-//   if (file.type === 'image/png') {
-//     const canvas = document.createElement('canvas');
-//     const img = new Image();
-//     img.src = URL.createObjectURL(file);
-//   await new Promise<void>((resolve) => {
-//     img.onload = () => {
-//       canvas.width = img.width;
-//       canvas.height = img.height;
-
-//       const ctx = canvas.getContext('2d');
-//       if (ctx) {
-//         ctx.fillStyle = '#FFFFFF'; // Thêm nền trắng cho JPG
-//         ctx.fillRect(0, 0, canvas.width, canvas.height);
-//         ctx.drawImage(img, 0, 0);
-        
-//         canvas.toBlob((blob) => {
-//           if (blob) {
-//             imageFile = new File([blob], file.name.replace(/\.png$/, '.jpg'), {
-//               type: 'image/jpeg',
-//             });
-//             resolve();
-//           }
-//         }, 'image/jpeg');
-//       }
-//     };
-//   });
-// }
-
-  const formData = new FormData();
-  formData.append('image', file);
-  formData.append('user_id', userData.id || "qqq");
-
-  try {
-    const response = await axios.post('http://127.0.0.1:8989/api/v1/upload/image', formData);
-    if (response.status === 200) {
-      notification.success({ message: 'Image uploaded successfully' });
-      setIsModalVisible(false);
-      fetchGpl(); 
-    } else {
-      notification.error({ message: 'Image upload failed' });
+  const handleUploadAvatar = async () => {
+    if (!file || !userData) {
+      notification.error({ message: 'Chưa chọn ảnh hoặc thiếu thông tin người dùng' });
+      return;
     }
-  } catch (error) {
-    notification.error({ message: 'Upload failed. Please try again.' });
-  } finally {
-    setLoading(false);
-  }
-};
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('user_id', userData.id || 'unknown');
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8989/api/v1/upload/image', formData);
+      if (response.status === 200) {
+        notification.success({ message: 'Tải ảnh thành công' });
+        setIsModalVisible(false);
+        fetchGpl(); 
+      } else {
+        notification.error({ message: 'Tải ảnh thất bại' });
+      }
+    } catch (error) {
+      notification.error({ message: 'Lỗi khi tải ảnh. Vui lòng thử lại.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Wrap>
       <Header>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-  <Avatar size={200} src={userData?.avatar} icon={<UserOutlined />} />
-  <p style={{ marginLeft: '20px', fontSize: '18px' }}>{userData?.name}</p>
-</div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar size={200} src={userData?.avatar} icon={<UserOutlined />} />
+          <p style={{ marginLeft: '20px', fontSize: '40px' }}>{userData?.name}</p>
+        </div>
         <Space size="middle">
           <Button
-            icon={<UploadOutlined style={{ fontSize: '20px' }}/>}
+            icon={<UploadOutlined style={{ fontSize: '20px' }} />}
             style={{ border: 'none', padding: '10px', fontSize: '20px' }}
             onClick={handleModelOpen}
           >
             Tải ảnh đại diện
           </Button>
-        <Button
-          icon={<EditOutlined style={{ fontSize: '20px' }} />}
-          style={{ border: 'none', padding: '10px', fontSize: '20px' }}
-        >
-          Sửa thông tin
-        </Button>
+          <Button
+            icon={<EditOutlined style={{ fontSize: '20px' }} />}
+            style={{ border: 'none', padding: '10px', fontSize: '20px' }}
+          >
+            Sửa thông tin
+          </Button>
         </Space>
       </Header>
 
@@ -139,21 +120,17 @@ const handleUploadAvatar = async () => {
         onCancel={handleModalCancel}
         footer={null}
       >
-        <Upload
-  name="avatar"
-  listType="picture-card"
-  showUploadList={true}
-  onChange={handleUploadChange}
-  maxCount={1} 
->
-          <Button>Chọn ảnh từ máy</Button>
-        </Upload>
-        <Button key="upload" loading={loading} onClick={handleUploadAvatar}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+          <Upload {...uploadProps}>
+            <Avatar size={100} src={previewUrl || undefined} icon={<UploadOutlined />} />
+          </Upload>
+          <Button onClick={handleUploadAvatar} loading={loading} style={{ marginTop: '20px' }}>
             Tải lên
-          </Button>,
+          </Button>
+        </div>
       </Modal>
 
-      <div style={{width: '100%', height:'20px'}}></div>
+      <div style={{ width: '100%', height: '20px' }}></div>
 
       <div style={{ padding: '20px', width: '100%', backgroundColor: 'white', display: 'flex',  justifyContent: 'center', borderRadius:'20px', }}>
       <div style={{ maxWidth: '600px', width: '100%'}}>
@@ -194,3 +171,4 @@ const handleUploadAvatar = async () => {
 };
 
 export default ProfileContainer;
+
