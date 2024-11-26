@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react'
-import { notification, List } from 'antd'
+import { notification, List, Modal } from 'antd'
 import { eventPagination } from '@graphql/query/user/event-pagination'
 import { Pagination } from '@models/pagination'
 import { useMounted } from '@hooks/lifecycle'
@@ -31,6 +31,7 @@ const EventPagination: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [eventData, setEventData] = useState<Event[]>([])
   const [page, setPage] = useState<Pagination>(Pagination.default)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) // Để lưu sự kiện được chọn
   const onPushShallow = usePushShallowRoute()
   const params = useParams<{ page: string; limit: string }>()
   const paramsRef = useRef(params)
@@ -41,7 +42,7 @@ const EventPagination: React.FC = () => {
       .then(r => {
         if (r.success) {
           setLoading(false)
-          setEventData(r.data ?? []) // Lưu dữ liệu vào trạng thái
+          setEventData(r.data ?? []) 
           setPage(r.paging!)
         }
       })
@@ -51,7 +52,15 @@ const EventPagination: React.FC = () => {
       })
   }, [])
 
-  useMounted(() => fetch({ page: 1, limit: 3 })) // Đặt limit mặc định là 3 khi lần đầu tiên fetch
+  useMounted(() => fetch({ page: 1, limit: 3 })) 
+
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event)
+  }
+
+  const handleModalClose = () => {
+    setSelectedEvent(null)
+  }
 
   return (
     <Wrap>
@@ -60,9 +69,9 @@ const EventPagination: React.FC = () => {
       </Header>
       <List
         pagination={{
-          pageSize: 3, // Đảm bảo mỗi trang có 3 mục
+          pageSize: 3, 
           current: page.current > 0 ? page.current : 1,
-          total: page.total, // Số lượng mục trong tất cả các trang
+          total: page.total, 
           onChange: (newPage, pageSize) => {
             onPushShallow({
               ...paramsRef.current,
@@ -71,14 +80,14 @@ const EventPagination: React.FC = () => {
             })
             fetch({
               page: newPage,
-              limit: pageSize, // Sử dụng pageSize ở đây
+              limit: pageSize, 
             })
           },
         }}
         loading={loading}
-        dataSource={eventData} // Dữ liệu lấy từ API
+        dataSource={eventData}
         renderItem={item => (
-          <List.Item>
+          <List.Item onClick={() => handleEventClick(item)} style={{ cursor: 'pointer' }}>
             <List.Item.Meta
               title={
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -91,6 +100,19 @@ const EventPagination: React.FC = () => {
           </List.Item>
         )}
       />
+      
+      <Modal
+        title="Chi tiết sự kiện"
+        open={!!selectedEvent} 
+        onCancel={handleModalClose}
+        footer={null}
+      >
+        {selectedEvent && (
+          <div>
+            <p>{selectedEvent.description}</p>
+          </div>
+        )}
+      </Modal>
     </Wrap>
   )
 }

@@ -81,6 +81,18 @@ const BarChar: React.FC = () => {
                     id="yearSelect"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value as YearKey)}
+                    style={{
+                        padding: '5px 12px',
+                        fontSize: '14px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        backgroundColor: '#f9f9f9',
+                        color: '#333',
+                        width: '150px',
+                        cursor: 'pointer',
+                        outline: 'none', // Loại bỏ đường viền mặc định khi focus
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' // Tạo hiệu ứng bóng mờ nhẹ
+                    }}
                 >
                     <option value="2023">2023</option>
                     <option value="2022">2022</option>

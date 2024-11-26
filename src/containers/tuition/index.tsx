@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Wrap, Header, TableBox, TableData } from '../accountList/style';
-import { Collapse, Button, Spin, notification, TableProps } from 'antd';
+import { Collapse, Button, Spin, notification, TableProps,  } from 'antd';
 import { EditOutlined} from '@ant-design/icons'
 import { Tuition } from '@models/tuition';
 import { tuitionList } from '@graphql/query/admin/tuition-list';
@@ -81,8 +81,6 @@ const TuitionContainer: React.FC = () => {
         },
     ];
 
-    // Mặc định sẽ load theo tháng hiện tại
-    // useMounted(() => fetchTuition({ month: currentMonth, year: currentYear }));
     const handleCollapseChange = (activeKey: string | string[]) => {
             const month = activeKey.toString().padStart(2, '0');
             const year = selectedYear
@@ -103,16 +101,15 @@ const TuitionContainer: React.FC = () => {
             });
     };
     
-    // Tạo danh sách các Panel cho Collapse
     const items = months.map((month) => ({
         key: month,
         label: `Tháng ${month}`,
         children: (
             <TableData
                 columns={columns}
-                rowKey={(record) => record?.id ?? `${month}-${Math.random()}`} // Dùng id hoặc fallback
-                dataSource={tuitionData[month.padStart(2, '0')] || []} // Dữ liệu của tháng hiện tại
-                pagination={false} // Không phân trang nếu không cần
+                rowKey={(record) => record?.id ?? `${month}-${Math.random()}`}
+                dataSource={tuitionData[month.padStart(2, '0')] || []} 
+                pagination={false} 
             />
         ),
     }));
@@ -134,6 +131,18 @@ const TuitionContainer: React.FC = () => {
                     id="yearSelect"
                     value={selectedYear}
                     onChange={handleChangeMonth}
+                    style={{
+                        padding: '8px 12px',
+                        fontSize: '14px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        backgroundColor: '#f9f9f9',
+                        color: '#333',
+                        width: '150px',
+                        cursor: 'pointer',
+                        outline: 'none', // Loại bỏ đường viền mặc định khi focus
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' // Tạo hiệu ứng bóng mờ nhẹ
+                    }}
                 >
                     <option value="2024">2024</option>
                     <option value="2023">2023</option>

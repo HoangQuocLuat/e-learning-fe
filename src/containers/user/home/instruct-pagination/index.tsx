@@ -1,23 +1,23 @@
-import React, { useCallback, useState, useRef } from 'react';
-import { notification, List } from 'antd';
-import { instructPagination } from '@graphql/query/user/instruct-pagination';
-import { Pagination } from '@models/pagination';
-import { useMounted } from '@hooks/lifecycle';
-import { Instruct } from '@models/instruct';
-import styled from 'styled-components';
-import { flash } from 'react-animations';
-import { keyframes } from 'styled-components';
-import { Wrap, Header } from '../../../accountList/style';
-import { usePushShallowRoute } from '@hooks/router';
-import { useParams } from 'react-router-dom';
+import React, { useCallback, useState, useRef } from 'react'
+import { notification, List, Modal } from 'antd'
+import { instructPagination } from '@graphql/query/user/instruct-pagination'
+import { Pagination } from '@models/pagination'
+import { useMounted } from '@hooks/lifecycle'
+import { Instruct } from '@models/instruct'
+import styled from 'styled-components'
+import { flash } from 'react-animations'
+import { keyframes } from 'styled-components'
+import { Wrap, Header } from '../../../accountList/style'
+import { usePushShallowRoute } from '@hooks/router'
+import { useParams } from 'react-router-dom'
 
 type FetchParams = {
-  page?: number;
-  limit?: number;
-  search?: Record<string, any>;
-};
+  page?: number
+  limit?: number
+  search?: Record<string, any>
+}
 
-const FlashAnimation = keyframes`${flash}`;
+const FlashAnimation = keyframes`${flash}`
 const FlashingIcon = styled.div`
   display: inline-block;
   font-size: 10px;
@@ -25,33 +25,42 @@ const FlashingIcon = styled.div`
   color: #ff0000;
   text-transform: uppercase;
   animation: 1s ${FlashAnimation} infinite; // Tạo hoạt hình nhấp nháy liên tục
-`;
+`
 
 const InstructPagination: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [instructData, setInstructData] = useState<Instruct[]>([]);
-  const [page, setPage] = useState<Pagination>(Pagination.default);
-  const onPushShallow = usePushShallowRoute();
-  const params = useParams<{ page: string; limit: string }>();
-  const paramsRef = useRef(params);
+  const [loading, setLoading] = useState<boolean>(false)
+  const [instructData, setInstructData] = useState<Instruct[]>([])
+  const [page, setPage] = useState<Pagination>(Pagination.default)
+  const [selectedInstruct, setSelectedInstruct] = useState<Instruct | null>(null) // Để lưu sự kiện được chọn
+  const onPushShallow = usePushShallowRoute()
+  const params = useParams<{ page: string; limit: string }>()
+  const paramsRef = useRef(params)
 
   const fetch = useCallback(({ page, limit, search }: FetchParams) => {
-    setLoading(true);
+    setLoading(true)
     instructPagination({ page, limit, search })
       .then(r => {
         if (r.success) {
-          setLoading(false);
-          setInstructData(r.data ?? []); // Lưu dữ liệu vào trạng thái
-          setPage(r.paging!); // Cập nhật trang
+          setLoading(false)
+          setInstructData(r.data ?? []) // Lưu dữ liệu vào trạng thái
+          setPage(r.paging!) // Cập nhật trang
         }
       })
       .catch(() => {
-        setLoading(false);
-        notification.error({ message: 'Có lỗi xảy ra!' });
-      });
-  }, []);
+        setLoading(false)
+        notification.error({ message: 'Có lỗi xảy ra!' })
+      })
+  }, [])
 
-  useMounted(() => fetch({ page: 1, limit: 3 })); // Đặt limit mặc định là 3 khi lần đầu tiên fetch
+  useMounted(() => fetch({ page: 1, limit: 3 })) // Đặt limit mặc định là 3 khi lần đầu tiên fetch
+
+  const handleInstructClick = (instruct: Instruct) => {
+    setSelectedInstruct(instruct)
+  }
+
+  const handleModalClose = () => {
+    setSelectedInstruct(null)
+  }
 
   return (
     <Wrap>
@@ -69,16 +78,16 @@ const InstructPagination: React.FC = () => {
               ...paramsRef.current,
               page: newPage,
               limit: pageSize,
-            });
+            })
             fetch({
               page: newPage,
               limit: pageSize, // Sử dụng pageSize ở đây
-            });
+            })
           },
         }}
         dataSource={instructData} // Dữ liệu lấy từ API
-        renderItem={(item) => (
-          <List.Item>
+        renderItem={item => (
+          <List.Item onClick={() => handleInstructClick(item)} style={{ cursor: 'pointer' }}>
             <List.Item.Meta
               title={
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -91,8 +100,21 @@ const InstructPagination: React.FC = () => {
           </List.Item>
         )}
       />
-    </Wrap>
-  );
-};
 
-export default InstructPagination;
+      <Modal
+        title="Chi tiết sự kiện"
+        open={!!selectedInstruct}
+        onCancel={handleModalClose}
+        footer={null}
+      >
+        {selectedInstruct && (
+          <div>
+            <p>{selectedInstruct.description}</p>
+          </div>
+        )}
+      </Modal>
+    </Wrap>
+  )
+}
+
+export default InstructPagination
