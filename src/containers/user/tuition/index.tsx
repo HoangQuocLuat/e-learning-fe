@@ -33,10 +33,11 @@ const TuitionContainer: React.FC = () => {
           });
     }
     useMounted(() => fetchGpl())
-const handlePayment = async (app_user: string) => {
+const handlePayment = async (app_user: string, tuition_id: string | undefined) => {
     try {
         const response = await axios.post('http://127.0.0.1:8989/api/v1/payment/order', {
             app_user: app_user,
+            tuition_id: tuition_id
         });
         if (response.data.Message === 'Hoc phi da thanh toan') {
             alert(response.data.Message);
@@ -83,7 +84,7 @@ const handlePayment = async (app_user: string) => {
                 onClick={() =>{
                   console.log("aaa", record)
                     if (record.user?.id) {
-                        handlePayment(record.user?.id)
+                        handlePayment(record.user?.id, record.id)
                     }
                     else {
                         alert('Không tìm thấy học sinh này.')
