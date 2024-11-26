@@ -1,27 +1,28 @@
 import React, { useImperativeHandle, forwardRef, useRef, useEffect } from 'react';
 import { Form, Input, Button } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
-import { Event } from '@models/event';
+import { Instruct } from '@models/instruct';
 
-export type FormInputEventProps = {
-  dataEvent?: Event;
-  onAddEvent?: (input: Event) => Promise<boolean>;
-  onUpdateEvent?: (input: Event) => Promise<boolean>;
+export type FormInputInstructProps = {
+  dataInstruct?: Instruct;
+  onAddInstruct?: (input: Instruct) => Promise<boolean>;
+  onUpdateInstruct?: (input: Instruct) => Promise<boolean>;
 };
 
-export type FormInputEventRef = {
+export type FormInputInstructRef = {
   reset: () => void;
 };
 
-const FormInputEvent: React.ForwardRefRenderFunction<FormInputEventRef, FormInputEventProps> = (
-  { dataEvent, 
-    onAddEvent = () => Promise.resolve(false), 
-    onUpdateEvent = () => Promise.resolve(false) 
+const FormInputInstruct: React.ForwardRefRenderFunction<FormInputInstructRef, FormInputInstructProps> = (
+  { 
+    dataInstruct, 
+    onAddInstruct = () => Promise.resolve(false), 
+    onUpdateInstruct = () => Promise.resolve(false) 
   },
   ref
 ) => {
   const [form] = Form.useForm();
-  const oldData = useRef<Event | null>(null);
+  const oldData = useRef<Instruct | null>(null);
 
   useImperativeHandle(ref, () => ({
     reset: () => {
@@ -30,32 +31,32 @@ const FormInputEvent: React.ForwardRefRenderFunction<FormInputEventRef, FormInpu
   }));
 
   useEffect(() => {
-    if (dataEvent) {
+    if (dataInstruct) {
       form.setFieldsValue({
-        title: dataEvent.title,
-        description: dataEvent.description,
-        date: dataEvent.date,
+        title: dataInstruct.title,
+        description: dataInstruct.description,
+        date: dataInstruct.date,
       });
     } else {
       form.resetFields();
     }
-  }, [dataEvent]);
+  }, [dataInstruct]);
 
   const onFinish = () => {
-    const input = { ...oldData.current } as Event;
-    if (dataEvent) {
-      input.id = dataEvent.id;
+    const input = { ...oldData.current } as Instruct;
+    if (dataInstruct) {
+      input.id = dataInstruct.id;
     }
     input.title = form.getFieldValue('title');
     input.description = form.getFieldValue('description');
     input.date = form.getFieldValue('date');
 
-    if (!dataEvent) {
-      onAddEvent?.(input);
+    if (!dataInstruct) {
+      onAddInstruct?.(input);
     }
 
-    if (dataEvent) {
-      onUpdateEvent?.(input);
+    if (dataInstruct) {
+      onUpdateInstruct?.(input);
     }
 
     form.resetFields();
@@ -74,18 +75,18 @@ const FormInputEvent: React.ForwardRefRenderFunction<FormInputEventRef, FormInpu
     >
       <div>
         <Form.Item
-          label="Tiêu đề sự kiện"
+          label="Tiêu đề hướng dẫn"
           name="title"
           rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}
         >
-          <Input placeholder="Nhập tiêu đề sự kiện" />
+          <Input placeholder="Nhập tiêu đề hướng dẫn" />
         </Form.Item>
         <Form.Item
-          label="Mô tả sự kiện"
+          label="Mô tả hướng dẫn"
           name="description"
           rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
         >
-          <Input.TextArea placeholder="Nhập mô tả sự kiện" rows={4} />
+          <Input.TextArea placeholder="Nhập mô tả hướng dẫn" rows={4} />
         </Form.Item>
       </div>
       <div>
@@ -100,7 +101,7 @@ const FormInputEvent: React.ForwardRefRenderFunction<FormInputEventRef, FormInpu
           }}
         >
           <Button type="primary" htmlType="submit" icon={<CheckOutlined />}>
-            {dataEvent ? 'Save' : 'Add'}
+            {dataInstruct ? 'Save' : 'Add'}
           </Button>
         </Form.Item>
       </div>
@@ -108,4 +109,4 @@ const FormInputEvent: React.ForwardRefRenderFunction<FormInputEventRef, FormInpu
   );
 };
 
-export default forwardRef(FormInputEvent);
+export default forwardRef(FormInputInstruct);

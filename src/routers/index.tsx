@@ -243,6 +243,46 @@ export const routers: DataRouteObject[] = [
           },
         ]
       },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'event',
+            lazy: async () => {
+              const { default:  EventPage} = await import('@app/event')
+              return {
+                Component: EventPage,
+              }
+            },
+            meta: {
+              title: 'Quản lý bài sự kiện',
+            },
+          },
+        ]
+      },
+      {
+        id: generateRandomId(),
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            id: generateRandomId(),
+            path: 'instruct',
+            lazy: async () => {
+              const { default:  EventPage} = await import('@app/instruct')
+              return {
+                Component: EventPage,
+              }
+            },
+            meta: {
+              title: 'Quản lý bài hướng dẫn',
+            },
+          },
+        ]
+      },
     ],
   },
 ]

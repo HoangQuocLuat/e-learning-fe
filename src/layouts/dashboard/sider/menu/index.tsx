@@ -33,9 +33,9 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
     backgroundColor: '#f5f5f5',
   }}
 > 
-  <Avatar
+<Avatar
     shape="circle"
-    src="img/Logo.png"
+    src="https://marketplace.canva.com/EAE85VgPq3E/1/0/1600w/canva-v%E1%BA%BD-tay-h%C3%ACnh-tr%C3%B2n-logo-c3Jw1yOiXJw.jpg"
     style={{
       width: '100%',
       maxWidth: '10rem',
@@ -84,6 +84,16 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
               key: '/dashboard/payment',
               icon: <FileDoneOutlined />,
               label: <Link to={router_keys.attendance}>Quản lý hóa đơn</Link>,
+            },
+            {
+              key: '/dashboard/event',
+              icon: <FileDoneOutlined />,
+              label: <Link to={router_keys.attendance}>Quản lý bài sự kiện</Link>,
+            },
+            {
+              key: '/dashboard/instruct',
+              icon: <FileDoneOutlined />,
+              label: <Link to={router_keys.attendance}>Quản lý bài hướng dẫn</Link>,
             },
           ]}
         />

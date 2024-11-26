@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { Button, Space, TableProps, Upload, UploadProps, message, notification, Table } from 'antd'
+import { Button, Space, TableProps, Upload, UploadProps, message, notification, Table, Tag } from 'antd'
 import { EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
 import { Buttons, Header, TableBox, Wrap, TableData, BoxAction } from './style'
 import { Account } from '@models/account'
@@ -138,6 +138,11 @@ const ListAccount: React.FC = () => {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
+      render: (dataIndex) => (
+        <Tag color={dataIndex === 'đang hoạt động' ? 'green' : 'red'}>
+            {dataIndex}
+        </Tag>
+      ),
     },
     {
       title: 'Lớp học',

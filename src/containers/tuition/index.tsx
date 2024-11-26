@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Wrap, Header, TableBox } from '../accountList/style';
-import { Collapse, List, Button, Spin, notification } from 'antd';
+import { Wrap, Header, TableBox, TableData } from '../accountList/style';
+import { Collapse, Button, Spin, notification, TableProps } from 'antd';
 import { EditOutlined} from '@ant-design/icons'
 import { Tuition } from '@models/tuition';
 import { tuitionList } from '@graphql/query/admin/tuition-list';
@@ -42,6 +42,45 @@ const TuitionContainer: React.FC = () => {
             });
     };
 
+    const columns: TableProps<Record<string, any>>['columns'] = [
+        {
+            title: 'Học sinh',
+            dataIndex: ['user', 'name'],
+            key: 'name',
+        },
+        {
+            title: 'Tổng học phí',
+            dataIndex: 'total_fee',
+            key: 'total_fee',
+        },
+        {
+            title: 'Số tiền sau khi giảm',
+            dataIndex: 'discount',
+            key: 'discount',
+        },
+        {
+            title: 'Số tiền đã trả',
+            dataIndex: 'paid_amount',
+            key: 'paid_amount',
+        },
+        {
+            title: 'Dư nợ',
+            dataIndex: 'remaining_fee',
+            key: 'remaining_fee',
+        },
+        {
+            title: 'Hành động',
+            key: 'action',
+            render: (record) => (
+                <Button
+                    icon={<EditOutlined />}
+                    onClick={() => drawerRef.current?.open(record)}
+                    style={{ border: 'none' }}
+                />
+            ),
+        },
+    ];
+
     // Mặc định sẽ load theo tháng hiện tại
     // useMounted(() => fetchTuition({ month: currentMonth, year: currentYear }));
     const handleCollapseChange = (activeKey: string | string[]) => {
@@ -69,25 +108,15 @@ const TuitionContainer: React.FC = () => {
         key: month,
         label: `Tháng ${month}`,
         children: (
-            <List
-                dataSource={tuitionData[month.padStart(2, '0')] || []}
-                renderItem={(item, index) => (
-                    <List.Item key={index}>
-                        <p>Học sinh: {item.user?.name}</p>
-                        <p>Tổng học phí: {item.total_fee}</p>
-                        <p>Số tiền sau khi giảm: {item.discount}</p>
-                        <p>Số tiền đã trả: {item.paid_amount}</p>
-                        <p>Dư nợ: {item.remaining_fee}</p>  
-                        <Button
-                            icon={<EditOutlined />}
-                            onClick={() => {drawerRef.current?.open(item)}}
-                            style={{ border: 'none' }}
-                        />
-                    </List.Item>
-                )}
+            <TableData
+                columns={columns}
+                rowKey={(record) => record?.id ?? `${month}-${Math.random()}`} // Dùng id hoặc fallback
+                dataSource={tuitionData[month.padStart(2, '0')] || []} // Dữ liệu của tháng hiện tại
+                pagination={false} // Không phân trang nếu không cần
             />
         ),
     }));
+    
 
     const handleChangeMonth = (e: any) => {
         setSelectedYear(e.target.value)
@@ -95,7 +124,7 @@ const TuitionContainer: React.FC = () => {
             month: currentMonth,
             year: selectedYear,
         });
-    }
+    }    
 
     return (
         <Wrap>

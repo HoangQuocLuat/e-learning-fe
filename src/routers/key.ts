@@ -10,6 +10,8 @@ export const router_keys = {
     class: '/dashboard/class',
     tuition: '/dashboard/tuition',
     attendance: '/dashboard/attendance',
+    event : '/dashboard/event',
+    instruct : '/dashboard/instruct',
     template: {
       table: {
         list: '/template/table',

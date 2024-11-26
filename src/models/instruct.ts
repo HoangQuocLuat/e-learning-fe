@@ -16,6 +16,9 @@ export class Instruct extends Base {
   @field()
   docurl?: string
 
+  @field()
+  date?: string
+
   public toAddJson() {
     return {
       ...this.toJson(),

@@ -32,7 +32,7 @@ export const TableData = styled(Table)`
     color: #3154a0; /* Màu chữ của tiêu đề cột */
     border-radius: unset !important;
     text-align: center;
-    font-size: 1.4rem;
+    font-size: 20px;
     text-transform: uppercase;
     font-weight: bold;
   }

@@ -43,7 +43,7 @@ const Title = styled.h1`
   font-weight: bold;
   text-transform: uppercase;
   ${media_break_points.phone_only} {
-    font-size: 1.4rem;
+    font-size: 20px;
   }
 `
 

@@ -40,7 +40,6 @@ export const theme: DefaultTheme = {
     medium: '1.2rem',
     button_1: '1.4rem',
     button_2: '1.4rem',
-
   },
 }
 type StyledThemeProviderProps = {

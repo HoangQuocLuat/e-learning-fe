@@ -1,4 +1,4 @@
-import HomeContainer from "@containers/home"
+import HomeContainer from "@containers/user/home"
 
 type HomePageProps = {}
  
