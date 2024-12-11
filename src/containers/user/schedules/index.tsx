@@ -73,7 +73,7 @@ const SchedulesContainer: React.FC = () => {
       <Calendar cellRender={dateCellRender} />
       {/* Modal to display schedule details */}
       <Modal
-        title={`Details for ${selectedSchedule?.description}`}
+        title={`Chi tiết lịch ${selectedSchedule?.description}`}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={[

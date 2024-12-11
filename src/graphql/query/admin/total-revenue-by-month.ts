@@ -4,18 +4,20 @@ import client from '@graphql/client/admin_client'
 import { handleGraphqlError } from '@graphql/handle'
 import Cookies from 'js-cookie'
 
-const revenueByMonthCurentGpl = gql`
-  query RevenueByMonthCurent {
-    revenueByMonthCurent
+const revenueByMonthGql = gql`
+  query RevenueByMonthCurent($month: String!, $year: String!) {
+    revenueByMonthCurent(month: $month, year: $year)
   }
 `
-export const revenueByMonthCurent = () => {
+
+export const revenueByMonth = (p: { month: string, year: string }) => {
     return client
         .query<{
             revenueByMonthCurent: number
         }>({
-            query: revenueByMonthCurentGpl,
+            query: revenueByMonthGql,
             fetchPolicy: 'no-cache',
+            variables: { month: p.month, year: p.year },
             context: {
                 headers: {
                     token: Cookies.get(AUTHEN_TOKEN_KEY) || '',

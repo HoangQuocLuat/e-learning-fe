@@ -1,34 +1,57 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
+import { revenueByMonth } from '@graphql/query/admin/total-revenue-by-month';
 
-// Khai báo kiểu của dữ liệu năm
 type YearData = {
     months: string[];
     revenue: number[];
 };
 
-// Khai báo các năm hợp lệ cho `dataByYear`
-type YearKey = '2023' | '2022' | '2021';
+type YearKey = '2024' | '2023';
 
 const BarChar: React.FC = () => {
     const chartRef = useRef<HTMLDivElement>(null);
-    const [selectedYear, setSelectedYear] = useState<YearKey>('2023'); // Năm mặc định
+    const [selectedYear, setSelectedYear] = useState<YearKey>('2024');
+    const [dataByYear, setDataByYear] = useState<Record<YearKey, YearData>>({
+        '2024': { months: [], revenue: [] },
+        '2023': { months: [], revenue: [] },
+    });
 
-    // Giả lập dữ liệu từ API cho các năm
-    const dataByYear: Record<YearKey, YearData> = {
-        '2023': {
-            months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            revenue: [1200, 1500, 1800, 1300, 1600, 2000, 2200, 1700, 1900, 2100, 2500, 2300]
-        },
-        '2022': {
-            months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            revenue: [1000, 1400, 1600, 1200, 1500, 1700, 2000, 1600, 1800, 1900, 2300, 2200]
-        },
-        '2021': {
-            months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            revenue: [900, 1300, 1500, 1100, 1400, 1600, 1900, 1500, 1700, 1800, 2200, 2100]
+    const fetchRevenueByMonth = async (year: string) => {
+        const months = [
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'
+        ];
+        const revenueData: number[] = [];
+        
+        for (const month of months) {
+            try {
+                const response = await revenueByMonth({ month, year });
+                if (response.success) {
+                    revenueData.push(response.data);
+                } else {
+                    revenueData.push(0);
+                }
+            } catch {
+                revenueData.push(0);
+            }
         }
+
+        return {
+            months,
+            revenue: revenueData
+        };
     };
+
+    useEffect(() => {
+        const loadData = async () => {
+            const currentData = await fetchRevenueByMonth(selectedYear);
+            setDataByYear((prevData) => ({
+                ...prevData,
+                [selectedYear]: currentData
+            }));
+        };
+        loadData();
+    }, [selectedYear]);
 
     useEffect(() => {
         if (chartRef.current) {
@@ -43,7 +66,7 @@ const BarChar: React.FC = () => {
                     },
                     yAxis: {
                         type: 'value',
-                        name: 'Revenue ($)',
+                        name: 'doanh thu (VnĐ)',
                     },
                     series: [
                         {
@@ -57,10 +80,8 @@ const BarChar: React.FC = () => {
                 myChart.setOption(option);
             };
 
-            // Cập nhật biểu đồ khi chọn năm mới
             updateChart();
 
-            // Xử lý khi resize
             const handleResize = () => {
                 myChart.resize();
             };
@@ -71,7 +92,7 @@ const BarChar: React.FC = () => {
                 myChart.dispose();
             };
         }
-    }, [selectedYear]); // Chạy lại useEffect khi selectedYear thay đổi
+    }, [dataByYear, selectedYear]);
 
     return (
         <div>
@@ -90,13 +111,12 @@ const BarChar: React.FC = () => {
                         color: '#333',
                         width: '150px',
                         cursor: 'pointer',
-                        outline: 'none', // Loại bỏ đường viền mặc định khi focus
-                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' // Tạo hiệu ứng bóng mờ nhẹ
+                        outline: 'none',
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
                     }}
                 >
+                    <option value="2024">2024</option>
                     <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
                 </select>
             </div>
             <div ref={chartRef} style={{ width: '100%', height: '400px' }} />

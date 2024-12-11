@@ -1,138 +1,110 @@
-import React, { useState, useRef } from 'react';
-import { Wrap, Header, TableBox, TableData } from '../accountList/style';
-import { Collapse, Button, Spin, notification, TableProps,  } from 'antd';
-import { EditOutlined} from '@ant-design/icons'
-import { Tuition } from '@models/tuition';
-import { tuitionList } from '@graphql/query/admin/tuition-list';
-import DrawersListTuition, { DrawerTuitionMethods } from './drawerListTuition'
+import React, { useEffect, useRef, useState } from 'react';
+import * as echarts from 'echarts';
+import { revenueByMonth } from '@graphql/query/admin/total-revenue-by-month';
 
-type FetchParams = {
-    month: string;
-    year: string;
+type YearData = {
+    months: string[];
+    revenue: number[];
 };
 
+const BarChar: React.FC = () => {
+    const chartRef = useRef<HTMLDivElement>(null);
+    const currentYear = new Date().getFullYear().toString(); 
+    const previousYear = (parseInt(currentYear) - 1).toString(); 
 
-const TuitionContainer: React.FC = () => {
-    const drawerRef = useRef<DrawerTuitionMethods>(null)
-    const [loading, setLoading] = useState(false);
-    const [selectedYear, setSelectedYear] = useState<string>('2024');
-    const [tuitionData, setTuitionData] = useState<{ [key: string]: Tuition[] }>({});
-    
-    const currentYear = new Date().getFullYear().toString();
-    const currentMonth = (new Date().getMonth() + 1).toString(); // Lấy tháng hiện tại (tháng từ 0-11)
-    const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
+    const [selectedYear, setSelectedYear] = useState<string>(currentYear);
+    const [dataByYear, setDataByYear] = useState<Record<string, YearData>>({
+        [currentYear]: { months: [], revenue: [] },
+        [previousYear]: { months: [], revenue: [] },
+    });
 
-    const fetchTuition =({ month, year }: FetchParams) => {
-        console.log(month)
-        setLoading(true);
-        tuitionList({ month, year })
-            .then((rTuition) => {
-                if (rTuition.success) {
-                    setTuitionData((prevData) => ({
-                        ...prevData,
-                        [`${month}`]: rTuition.data ?? [],
-                    }));
+    const fetchRevenueByMonth = async (year: string) => {
+        const months = [
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'
+        ];
+        const revenueData: number[] = [];
+        
+        for (const month of months) {
+            try {
+                const response = await revenueByMonth({ month, year });
+                if (response.success) {
+                    revenueData.push(response.data);
+                } else {
+                    revenueData.push(0);
                 }
-            })
-            .catch(() => {
-                notification.error({ message: 'Có lỗi xảy ra!' });
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            } catch {
+                revenueData.push(0);
+            }
+        }
+
+        return {
+            months,
+            revenue: revenueData
+        };
     };
 
-    const columns: TableProps<Record<string, any>>['columns'] = [
-        {
-            title: 'Học sinh',
-            dataIndex: ['user', 'name'],
-            key: 'name',
-        },
-        {
-            title: 'Tổng học phí',
-            dataIndex: 'total_fee',
-            key: 'total_fee',
-        },
-        {
-            title: 'Số tiền sau khi giảm',
-            dataIndex: 'discount',
-            key: 'discount',
-        },
-        {
-            title: 'Số tiền đã trả',
-            dataIndex: 'paid_amount',
-            key: 'paid_amount',
-        },
-        {
-            title: 'Dư nợ',
-            dataIndex: 'remaining_fee',
-            key: 'remaining_fee',
-        },
-        {
-            title: 'Hành động',
-            key: 'action',
-            render: (record) => (
-                <Button
-                    icon={<EditOutlined />}
-                    onClick={() => drawerRef.current?.open(record)}
-                    style={{ border: 'none' }}
-                />
-            ),
-        },
-    ];
+    useEffect(() => {
+        const loadData = async () => {
+            const currentData = await fetchRevenueByMonth(selectedYear);
+            setDataByYear((prevData) => ({
+                ...prevData,
+                [selectedYear]: currentData
+            }));
+        };
+        loadData();
+    }, [selectedYear]);
 
-    const handleCollapseChange = (activeKey: string | string[]) => {
-            const month = activeKey.toString().padStart(2, '0');
-            const year = selectedYear
-            tuitionList({ month, year})
-            .then((rTuition) => {
-                if (rTuition.success) {
-                    setTuitionData((prevData) => ({
-                        ...prevData,
-                        [`${month}`]: rTuition.data ?? [],
-                    }));
-                }
-            })
-            .catch(() => {
-                notification.error({ message: 'Có lỗi xảy ra!' });
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-    
-    const items = months.map((month) => ({
-        key: month,
-        label: `Tháng ${month}`,
-        children: (
-            <TableData
-                columns={columns}
-                rowKey={(record) => record?.id ?? `${month}-${Math.random()}`}
-                dataSource={tuitionData[month.padStart(2, '0')] || []} 
-                pagination={false} 
-            />
-        ),
-    }));
-    
+    useEffect(() => {
+        if (chartRef.current) {
+            const myChart = echarts.init(chartRef.current);
 
-    const handleChangeMonth = (e: any) => {
-        setSelectedYear(e.target.value)
-        fetchTuition({
-            month: currentMonth,
-            year: selectedYear,
-        });
-    }    
+            const updateChart = () => {
+                const currentData = dataByYear[selectedYear];
+                const option: echarts.EChartsOption = {
+                    xAxis: {
+                        type: 'category',
+                        data: currentData.months
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'doanh thu (VnĐ)',
+                    },
+                    series: [
+                        {
+                            data: currentData.revenue,
+                            type: 'bar',
+                            name: 'Monthly Revenue',
+                            color: '#5470C6'
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+            };
+
+            updateChart();
+
+            const handleResize = () => {
+                myChart.resize();
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                myChart.dispose();
+            };
+        }
+    }, [dataByYear, selectedYear]);
 
     return (
-        <Wrap>
-            <Header>
-                <h2>Quản lý học phí năm {selectedYear}</h2>
+        <div>
+            <div style={{ marginBottom: '10px' }}>
+                <label htmlFor="yearSelect">Chọn năm: </label>
                 <select
                     id="yearSelect"
                     value={selectedYear}
-                    onChange={handleChangeMonth}
+                    onChange={(e) => setSelectedYear(e.target.value)}
                     style={{
-                        padding: '8px 12px',
+                        padding: '5px 12px',
                         fontSize: '14px',
                         border: '1px solid #ccc',
                         borderRadius: '4px',
@@ -140,38 +112,17 @@ const TuitionContainer: React.FC = () => {
                         color: '#333',
                         width: '150px',
                         cursor: 'pointer',
-                        outline: 'none', // Loại bỏ đường viền mặc định khi focus
-                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' // Tạo hiệu ứng bóng mờ nhẹ
+                        outline: 'none',
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
                     }}
                 >
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
+                    <option value={currentYear}>{currentYear}</option>
+                    <option value={previousYear}>{previousYear}</option>
                 </select>
-            </Header>
-            <TableBox>
-                {loading ? (
-                    <Spin />
-                ) : (
-                    <Collapse accordion  onChange={handleCollapseChange} >
-                        {items.map(item => (
-                            <Collapse.Panel key={item.key} header={item.label}>
-                                {item.children}
-                            </Collapse.Panel>
-                        ))}
-                    </Collapse>
-                )}
-                <DrawersListTuition
-                 ref={drawerRef}
-                 onTuitionUpdateSucces={() =>
-                    fetchTuition({
-                      month:currentMonth,
-                      year:currentYear,
-                    })
-                  }
-                />
-            </TableBox>
-        </Wrap>
+            </div>
+            <div ref={chartRef} style={{ width: '100%', height: '400px' }} />
+        </div>
     );
 };
 
-export default TuitionContainer;
+export default BarChar;

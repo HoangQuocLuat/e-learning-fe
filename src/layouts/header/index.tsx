@@ -78,7 +78,6 @@ const LayoutHeader: React.FC<React.PropsWithChildren<LayoutHeaderProps>> = () =>
       </BoxTitle>
 
       <RightMenu>
-        <BellOutlined style={{ fontSize: '2.2rem', cursor: 'pointer' }} />
         <Dropdown menu={{ items }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
           <Avatar
             style={{ cursor: 'pointer' }}

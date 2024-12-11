@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { HEADER_HEIGHT } from '../constants'
 import { Link, useLocation } from 'react-router-dom'
 import { router_keys } from '@routers/key'
-import { BellOutlined, QuestionOutlined } from '@ant-design/icons'
 import { findRouter } from '@routers'
 import { media_break_points } from '@themes/styled/globalStyle'
 import Hamburger from '@components/hamburger'
@@ -78,8 +77,6 @@ const LayoutHeader: React.FC<React.PropsWithChildren<LayoutHeaderProps>> = () =>
       </BoxTitle>
 
       <RightMenu>
-        <QuestionOutlined style={{ fontSize: '2.2rem', cursor: 'pointer' }} />
-        <BellOutlined style={{ fontSize: '2.2rem', cursor: 'pointer' }} />
         <Dropdown menu={{ items }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
           <Avatar
             style={{ cursor: 'pointer' }}

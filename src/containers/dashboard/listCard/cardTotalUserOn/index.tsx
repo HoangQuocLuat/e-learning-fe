@@ -8,7 +8,6 @@ const CardTotalUserOn: React.FC = () => {
   const fetch = () => {
     totalUserOn()
       .then((response) => {
-        console.log("mmmmm",response)
         if (response.success) {
             setData(response?.data);
         } else {

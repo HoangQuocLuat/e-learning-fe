@@ -78,7 +78,7 @@ const FormInputListClass: React.ForwardRefRenderFunction<AddClassFormRef, AddCla
           <Input placeholder="" />
         </Form.Item>
         <Form.Item
-          label="Giá lớp học"
+          label="Học phí lớp học"
           name="price"
           rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
         >

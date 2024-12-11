@@ -40,7 +40,7 @@ const ListClass: React.FC = () => {
       key: 'class_name',
     },
     {
-      title: 'Giá',
+      title: 'Học phí',
       dataIndex: 'price',
       key: 'price',
     },
