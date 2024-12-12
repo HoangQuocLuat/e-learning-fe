@@ -94,8 +94,6 @@ const AttendanceContainer: React.FC = () => {
         return
       }
 
-      // Kiểm tra dữ liệu trước khi gửi
-      console.log('Captured image data URL:', imageDataUrl)
 
       // Send the image data to the backend
       try {

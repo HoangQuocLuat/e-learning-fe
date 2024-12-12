@@ -1,128 +1,199 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as echarts from 'echarts';
-import { revenueByMonth } from '@graphql/query/admin/total-revenue-by-month';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Wrap, Header, TableBox, TableData } from '../accountList/style';
+import { Collapse, Button, Spin, notification, TableProps, Input, Space } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
+import { Tuition } from '@models/tuition';
+import { tuitionPaginationByMonth } from '@graphql/query/admin/tuition-pagination';
+import DrawersListTuition, { DrawerTuitionMethods } from './drawerListTuition';
+import { Pagination } from '@models/pagination';
 
-type YearData = {
-    months: string[];
-    revenue: number[];
+type FetchParams = {
+  month: string;
+  year: string;
+  search?: string;
 };
 
-const BarChar: React.FC = () => {
-    const chartRef = useRef<HTMLDivElement>(null);
-    const currentYear = new Date().getFullYear().toString(); 
-    const previousYear = (parseInt(currentYear) - 1).toString(); 
+export const TuitionContainer: React.FC = () => {
+  const drawerRef = useRef<DrawerTuitionMethods>(null);
+  const [loading, setLoading] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<string>('2024');
+  const [tuitionData, setTuitionData] = useState<{ [key: string]: Tuition[] }>({});
+  const [openedMonth, setOpenedMonth] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
 
-    const [selectedYear, setSelectedYear] = useState<string>(currentYear);
-    const [dataByYear, setDataByYear] = useState<Record<string, YearData>>({
-        [currentYear]: { months: [], revenue: [] },
-        [previousYear]: { months: [], revenue: [] },
-    });
+  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
 
-    const fetchRevenueByMonth = async (year: string) => {
-        const months = [
-            '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'
-        ];
-        const revenueData: number[] = [];
-        
-        for (const month of months) {
-            try {
-                const response = await revenueByMonth({ month, year });
-                if (response.success) {
-                    revenueData.push(response.data);
-                } else {
-                    revenueData.push(0);
-                }
-            } catch {
-                revenueData.push(0);
-            }
+  const handleChangeMonth = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedYear(e.target.value);  // Cập nhật năm học khi người dùng chọn
+  };
+
+  const fetchTuition = useCallback(({ month, year, search }: FetchParams) => {
+    const formattedMonth = month.padStart(2, '0');
+    setLoading(true);
+    tuitionPaginationByMonth({
+      month: formattedMonth,
+      year,
+      page: 1,
+      limit: 5,
+      search: search ? { remaining_fee: search } : undefined,
+    })
+      .then((rTuition) => {
+        if (rTuition.success) {
+          setTuitionData((prevData) => ({
+            ...prevData,
+            [`${formattedMonth}`]: rTuition.data ?? [],
+          }));
         }
+      })
+      .catch(() => {
+        notification.error({ message: 'Có lỗi xảy ra!' });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
-        return {
-            months,
-            revenue: revenueData
-        };
-    };
+  const columns: TableProps<Record<string, any>>['columns'] = [
+    {
+      title: 'Học sinh',
+      dataIndex: ['user', 'name'],
+      key: 'name',
+    },
+    {
+      title: 'Tổng học phí',
+      dataIndex: 'total_fee',
+      key: 'total_fee',
+    },
+    {
+      title: 'Số tiền sau khi giảm',
+      dataIndex: 'discount',
+      key: 'discount',
+    },
+    {
+      title: 'Số tiền đã trả',
+      dataIndex: 'paid_amount',
+      key: 'paid_amount',
+    },
+    {
+      title: 'Dư nợ',
+      dataIndex: 'remaining_fee',
+      key: 'remaining_fee',
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      render: (record) => (
+        <Button
+          icon={<EditOutlined />}
+          onClick={() => drawerRef.current?.open(record)}
+          style={{ border: 'none' }}
+        />
+      ),
+    },
+  ];
 
-    useEffect(() => {
-        const loadData = async () => {
-            const currentData = await fetchRevenueByMonth(selectedYear);
-            setDataByYear((prevData) => ({
-                ...prevData,
-                [selectedYear]: currentData
-            }));
-        };
-        loadData();
-    }, [selectedYear]);
+  const handleCollapseChange = (activeKey: string | string[]) => {
+    const month = activeKey.toString().padStart(2, '0');
+    const year = selectedYear;
+    setOpenedMonth(month);
+    fetchTuition({ month, year, search });
+  };
 
-    useEffect(() => {
-        if (chartRef.current) {
-            const myChart = echarts.init(chartRef.current);
+  const onSearch = (value: string) => {
+    setSearch(value);  // Update the search state
+  };
 
-            const updateChart = () => {
-                const currentData = dataByYear[selectedYear];
-                const option: echarts.EChartsOption = {
-                    xAxis: {
-                        type: 'category',
-                        data: currentData.months
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: 'doanh thu (VnĐ)',
-                    },
-                    series: [
-                        {
-                            data: currentData.revenue,
-                            type: 'bar',
-                            name: 'Monthly Revenue',
-                            color: '#5470C6'
-                        }
-                    ]
-                };
-                myChart.setOption(option);
-            };
+  useEffect(() => {
+    if (openedMonth) {
+      fetchTuition({ month: openedMonth, year: selectedYear, search });  // Trigger fetch when year or search changes
+    }
+  }, [selectedYear, search, openedMonth, fetchTuition]);
 
-            updateChart();
+  const items = months.map((month) => ({
+    key: month.padStart(2, '0'),
+    label: `Tháng ${month.padStart(2, '0')}`,
+    children: (
+      <TableData
+        columns={columns}
+        rowKey={(record) => record?.id ?? `${month.padStart(2, '0')}-${Math.random()}`}
+        dataSource={tuitionData[month.padStart(2, '0')] || []}
+        pagination={{
+          pageSize: 5,
+          onChange: (page) => {
+            fetchTuition({ month, year: selectedYear, search });
+          },
+        }}
+      />
+    ),
+  }));
 
-            const handleResize = () => {
-                myChart.resize();
-            };
-
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-                myChart.dispose();
-            };
-        }
-    }, [dataByYear, selectedYear]);
-
-    return (
-        <div>
-            <div style={{ marginBottom: '10px' }}>
-                <label htmlFor="yearSelect">Chọn năm: </label>
-                <select
-                    id="yearSelect"
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    style={{
-                        padding: '5px 12px',
-                        fontSize: '14px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        backgroundColor: '#f9f9f9',
-                        color: '#333',
-                        width: '150px',
-                        cursor: 'pointer',
-                        outline: 'none',
-                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-                    }}
-                >
-                    <option value={currentYear}>{currentYear}</option>
-                    <option value={previousYear}>{previousYear}</option>
-                </select>
-            </div>
-            <div ref={chartRef} style={{ width: '100%', height: '400px' }} />
-        </div>
-    );
+  return (
+    <Wrap>
+      <h2>Quản lý học phí năm {selectedYear}</h2>
+      <Header>
+        <Space>
+          <label>Lọc năm: </label>
+          <select
+            id="yearSelect"
+            value={selectedYear}
+            onChange={handleChangeMonth}
+            style={{
+              padding: '8px 12px',
+              fontSize: '14px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: '#f9f9f9',
+              color: '#333',
+              width: '150px',
+              cursor: 'pointer',
+              outline: 'none',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+          </select>
+          <label>Lọc học phí: </label>
+          <select
+            value={search}
+            onChange={(e) => setSearch(e.target.value)} // Trigger search change
+            style={{
+              padding: '8px 12px',
+              fontSize: '14px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: '#f9f9f9',
+              color: '#333',
+              width: '200px',
+              cursor: 'pointer',
+              outline: 'none',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <option value=""></option>
+            <option value="1">Thiếu học phí</option>
+          </select>
+        </Space>
+      </Header>
+      <TableBox>
+        <Collapse
+          activeKey={openedMonth}
+          onChange={handleCollapseChange}
+          accordion
+        >
+          {items.map((item) => (
+            <Collapse.Panel key={item.key} header={item.label}>
+              {item.children}
+            </Collapse.Panel>
+          ))}
+        </Collapse>
+      </TableBox>
+      <DrawersListTuition
+        ref={drawerRef}
+        onTuitionUpdateSucces={() => fetchTuition({ month: openedMonth, year: selectedYear, search })}
+      />
+    </Wrap>
+  );
 };
 
-export default BarChar;
+export default TuitionContainer;
