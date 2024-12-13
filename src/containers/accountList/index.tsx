@@ -55,28 +55,29 @@ const ListAccount: React.FC = () => {
 
   const uploadProps: UploadProps = {
     name: 'file',
-    accept: '.csv',
-    // action: apiUploadFileEntry,
+    accept: '.xlsx',  
+    action: 'http://127.0.0.1:8989/api/v1/upload/info', 
     showUploadList: false,
     headers: {
       authorization: `Bearer ${Cookies.get(AUTHEN_TOKEN_KEY)}`,
     },
     beforeUpload: file => {
-      const isCSV = file.type === 'text/csv'
-      if (!isCSV) {
-        notification.error({ message: 'Chỉ chấp nhận file csv' })
+      const isXLSX = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.name.endsWith('.xlsx');
+      if (!isXLSX) {
+        notification.error({ message: 'Chỉ chấp nhận file Excel (.xlsx)' });
       }
-      return isCSV || Upload.LIST_IGNORE
+      return isXLSX || Upload.LIST_IGNORE;
     },
     onChange(info) {
       if (info.file.status === 'done') {
-        fetch({ page: 1, limit: page?.limit ?? 10 })
-        message.success(`${info.file.name} file uploaded successfully`)
+        fetch({ page: 1, limit: page?.limit ?? 10 });
+        message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`)
+        message.error(`${info.file.name} file upload failed.`);
       }
     },
-  }
+  };
+  
 
   const onSearch = (input: InputSearch) => {
     const user_name = input?.user_name
@@ -217,7 +218,6 @@ const ListAccount: React.FC = () => {
       />
     )
   }
-  
   
 
   return (

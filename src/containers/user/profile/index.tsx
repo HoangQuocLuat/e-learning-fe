@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import { Wrap } from '../../accountList/style';
 import { Account } from '@models/account'
 import { Header } from './style';
@@ -8,8 +8,9 @@ import { getUserMe } from '@graphql/query/user/user-me';
 import { useMounted } from '@hooks/lifecycle';
 import React from 'react';
 import axios from 'axios';
-
+import DrawPr, { DrawerPrMethods } from './draw'
 const ProfileContainer: React.FC = () => {
+  const drawerRef = useRef<DrawerPrMethods>(null)
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState<Account | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -107,10 +108,17 @@ const ProfileContainer: React.FC = () => {
           </Button>
           <Button
             icon={<EditOutlined style={{ fontSize: '20px' }} />}
+            onClick={() => { if (userData) drawerRef.current?.open(userData); }}
             style={{ border: 'none', padding: '10px', fontSize: '20px' }}
           >
             Sửa thông tin
           </Button>
+          <DrawPr
+          ref={drawerRef}
+          onAccountUpdateSucces={() =>
+            getUserMe()
+          }
+        />
         </Space>
       </Header>
 
