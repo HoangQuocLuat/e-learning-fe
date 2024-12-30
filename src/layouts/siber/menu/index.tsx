@@ -35,7 +35,7 @@ const Menu: React.FC<React.PropsWithChildren<MenuProps>> = () => {
 > 
   <Avatar
     shape="circle"
-    src="https://marketplace.canva.com/EAE85VgPq3E/1/0/1600w/canva-v%E1%BA%BD-tay-h%C3%ACnh-tr%C3%B2n-logo-c3Jw1yOiXJw.jpg"
+    src="https://png.pngtree.com/png-vector/20220131/ourmid/pngtree-book-logo-classes-education-information-vector-png-image_26249126.png"
     style={{
       width: '100%',
       maxWidth: '10rem',

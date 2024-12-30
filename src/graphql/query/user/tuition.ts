@@ -33,6 +33,7 @@ export const getTuition = () => {
     if (!userID) {
         return Promise.reject(new Error('User ID is not available.'));
     }
+    console.log("dd", userID)
 
     return client
         .query<{
