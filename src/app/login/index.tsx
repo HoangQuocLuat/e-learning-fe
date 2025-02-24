@@ -1,3 +1,5 @@
+import LoginContainer from "@containers/login"
+
 type LoginPageProps = {}
  
 const LoginPage: React.FC<LoginPageProps> = () => {

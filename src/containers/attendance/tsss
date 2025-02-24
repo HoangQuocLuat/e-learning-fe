@@ -1,0 +1,168 @@
+// import React, { useRef, useState, useCallback } from 'react';
+// import { Wrap, Header, TableBox, TableData } from '../accountList/style';
+// import { classList } from '@graphql/query/admin/class-list';
+// import { notification, Button, Space, TableProps, Modal, Table } from 'antd';
+// import { Class } from '@models/class';
+// import { CameraOutlined } from '@ant-design/icons';
+// import { useMounted } from '@hooks/lifecycle';
+
+// const AttendanceContainer: React.FC = () => {
+//     const [loading, setLoading] = useState<boolean>(false);
+//     const [imageData, setImageData] = useState<string | null>(null);
+//     const [classData, setClassData] = useState<Class[]>([]);
+//     const [isModalVisible, setIsModalVisible] = useState(false);
+//     const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+//     const [attendanceData, setAttendanceData] = useState([]); // Đây sẽ là dữ liệu điểm danh cho lớp
+//     const videoRef = useRef<HTMLVideoElement | null>(null);
+
+//     // Fetch danh sách lớp học
+//     const fetchClassList = useCallback(() => {
+//         setLoading(true);
+//         classList()
+//             .then(rClass => {
+//                 if (rClass.success) {
+//                     setLoading(false);
+//                     setClassData(rClass.data ?? []);
+//                 }
+//             })
+//             .catch(() => {
+//                 setLoading(false);
+//                 notification.error({ message: 'Có lỗi xảy ra!' });
+//             });
+//     }, []);
+    
+//     useMounted(() => fetchClassList());
+
+//     // Mở camera
+//     const startCamera = async () => {
+//         try {
+//             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+//             if (videoRef.current) {
+//                 videoRef.current.srcObject = stream;
+//             }
+//         } catch (error) {
+//             console.error('Error accessing webcam:', error);
+//         }
+//     };
+
+//     // Xử lý điểm danh
+//     const handleCheckIn = async () => {
+//         if (!videoRef.current || !selectedClassId) return;
+
+//         const canvas = document.createElement('canvas');
+//         canvas.width = videoRef.current.videoWidth;
+//         canvas.height = videoRef.current.videoHeight;
+//         const context = canvas.getContext('2d');
+
+//         if (context) {
+//             context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+//             const imageDataUrl = canvas.toDataURL('image/jpeg');
+//             setImageData(imageDataUrl);
+
+//             try {
+//                 const response = await fetch('http://127.0.0.1:8989/api/v1/test/openCam', {
+//                     method: 'POST',
+//                     headers: {
+//                         'Content-Type': 'application/json',
+//                     },
+//                     body: JSON.stringify({ image: imageDataUrl, class_id: selectedClassId }),
+//                 });
+//                 const result = await response.json();
+//                 console.log(result.message);
+
+//                 // Cập nhật danh sách điểm danh với dữ liệu mới
+//                 setAttendanceData(prevData => [...prevData, result.data]);
+//             } catch (error) {
+//                 console.error('Error sending image to backend:', error);
+//             }
+//         }
+//     };
+
+//     // Hiển thị modal điểm danh
+//     const openAttendanceModal = (classId: string) => {
+//         setSelectedClassId(classId);
+//         setIsModalVisible(true);
+//         startCamera(); // Mở camera khi modal xuất hiện
+//     };
+
+//     const columns: TableProps<Class>['columns'] = [
+//         {
+//             title: 'Tên lớp học',
+//             dataIndex: 'class_name',
+//             key: 'class_name',
+//         },
+//         {
+//             title: 'Hành động',
+//             key: 'action',
+//             render: (_, record) => (
+//                 <Space size="middle">
+//                     <Button
+//                         icon={<CameraOutlined />}
+//                         onClick={() => openAttendanceModal(record.id)} // Mở modal khi nhấn vào camera
+//                         style={{ border: 'none' }}
+//                     />
+//                 </Space>
+//             ),
+//         },
+//     ];
+
+//     // Cột hiển thị dữ liệu điểm danh
+//     const attendanceColumns = [
+//         {
+//             title: 'Tên người điểm danh',
+//             dataIndex: 'name',
+//             key: 'name',
+//         },
+//         {
+//             title: 'Thời gian check-in',
+//             dataIndex: 'check_in_time',
+//             key: 'check_in_time',
+//         },
+//     ];
+
+//     return (
+//         <Wrap>
+//             <Header>
+//                 <h2>Quản lý điểm danh</h2>
+//             </Header>
+//             <TableBox>
+//                 <TableData
+//                     columns={columns}
+//                     loading={loading}
+//                     dataSource={classData}
+//                     rowKey={record => record?.id ?? ''}
+//                     scroll={{ x: 600 }}
+//                 />
+//             </TableBox>
+//             <Modal
+//                 visible={isModalVisible}
+//                 onCancel={() => setIsModalVisible(false)}
+//                 footer={null}
+//                 width={800}
+//             >
+//                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+//                     <video
+//                         ref={videoRef}
+//                         width="320"
+//                         height="240"
+//                         autoPlay
+//                         style={{ border: '1px solid #ccc' }}
+//                     />
+//                     <div style={{ flex: 1, paddingLeft: 20 }}>
+//                         <Button onClick={handleCheckIn} type="primary" style={{ marginBottom: 16 }}>
+//                             Check In
+//                         </Button>
+//                         <Table
+//                             columns={attendanceColumns}
+//                             dataSource={attendanceData}
+//                             rowKey="id"
+//                             pagination={false}
+//                         />
+//                     </div>
+//                 </div>
+//             </Modal>
+//         </Wrap>
+//     );
+// };
+
+// export default AttendanceContainer;
